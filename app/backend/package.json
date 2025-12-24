@@ -23,6 +23,7 @@
     "@hono/eslint-config": "^2.0.3",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^20.19.26",
+    "eslint": "catalog:",
     "prettier": "catalog:",
     "prisma": "^7.2.0",
     "tsx": "^4.7.1",
