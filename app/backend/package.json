@@ -20,6 +20,7 @@
     "@hono/swagger-ui": "^0.5.2",
     "@prisma/adapter-better-sqlite3": "^7.2.0",
     "@prisma/client": "^7.2.0",
+    "argon2": "^0.44.0",
     "dotenv": "^17.2.3",
     "hono": "^4.11.0",
     "hono-openapi": "^1.1.2",
@@ -29,13 +30,13 @@
     "@hono/eslint-config": "^2.0.3",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^20.19.26",
+    "@vitest/coverage-v8": "catalog:",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "prisma": "^7.2.0",
     "tsx": "^4.7.1",
     "typescript": "catalog:",
     "vite-tsconfig-paths": "catalog:",
-    "vitest": "catalog:",
-    "@vitest/coverage-v8": "catalog:"
+    "vitest": "catalog:"
   }
 }
