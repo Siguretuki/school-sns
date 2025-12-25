@@ -27,8 +27,8 @@ model Users {
   email String @unique
   passwordHash String
   role UserRole @default(STUDENT)
-  bio String
-  avatarUrl String
+  bio String?
+  avatarUrl String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
