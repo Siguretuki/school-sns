@@ -5,7 +5,11 @@ import logo from '../logo.svg'
 export const Route = createFileRoute('/')({
   loader: async () => {
     const client = createClient('http://localhost:3000')
-    return (await client.demo.$get()).json()
+    return (
+      await client.demo.$get({
+        query: { kind: 'positive' },
+      })
+    ).json()
   },
   component: App,
 })

@@ -2,9 +2,9 @@
   "name": "backend",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "tsx watch src/devServer.ts",
     "build": "tsc",
-    "start": "node dist/index.js",
+    "start": "node dist/src/routes/index.js",
     "lint": "eslint",
     "format": "prettier .",
     "check": "prettier --write . && eslint --fix",
@@ -14,10 +14,14 @@
   },
   "dependencies": {
     "@hono/node-server": "^1.19.6",
+    "@hono/standard-validator": "^0.2.1",
+    "@hono/swagger-ui": "^0.5.2",
     "@prisma/adapter-better-sqlite3": "^7.2.0",
     "@prisma/client": "^7.2.0",
     "dotenv": "^17.2.3",
-    "hono": "^4.11.0"
+    "hono": "^4.11.0",
+    "hono-openapi": "^1.1.2",
+    "zod": "^4.2.1"
   },
   "devDependencies": {
     "@hono/eslint-config": "^2.0.3",
