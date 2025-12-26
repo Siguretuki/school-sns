@@ -10,6 +10,6 @@
     "jsxImportSource": "hono/jsx",
     "outDir": "./dist"
   },
-  "include": ["src/**/*", "vitest.config.ts"],
+  "include": ["src/**/*", "vitest.config.ts", "prisma.config.ts"],
   "exclude": ["node_modules"]
 }
