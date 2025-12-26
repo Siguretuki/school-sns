@@ -98,6 +98,7 @@ pnpm format
   }
   ```
 - 同名スクリプトを持つパッケージ群を一括実行する場合、`pnpm -r run <script>` でも可能ですが、本プロジェクトでは対象を backend/frontend に絞るため `--filter` を併用しています。
+- forkした場合のgitの使い方については[こちら]('https://gist.github.com/Stone5656/69d0bbeb34b6bf20a1235cc998c30213')を参照してください
 
 ---
 
