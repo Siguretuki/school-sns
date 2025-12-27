@@ -21,6 +21,22 @@ const generateJwt = async (user: { id: string; role: string }) => {
   return await sign(payload, JWT_SECRET)
 }
 
+export class AuthError extends Error {}
+
+export class EmailAlreadyExistsError extends AuthError {
+  constructor() {
+    super('Email already exists')
+    this.name = 'EmailAlreadyExistsError'
+  }
+}
+
+export class InvalidCredentialsError extends AuthError {
+  constructor() {
+    super('Invalid email or password')
+    this.name = 'InvalidCredentialsError'
+  }
+}
+
 export const authService = {
   /**
    * 新規登録
@@ -29,7 +45,7 @@ export const authService = {
     // 1. 重複チェック
     const existingUser = await authRepository.findByEmail(input.email)
     if (existingUser) {
-      throw new HTTPException(400, { message: 'Email already exists' })
+      throw new EmailAlreadyExistsError()
     }
 
     // 2. ハッシュ化
@@ -64,7 +80,7 @@ export const authService = {
     const user = await authRepository.findByEmail(input.email)
 
     if (!user) {
-      throw new HTTPException(401, { message: 'Invalid email or password' })
+      throw new InvalidCredentialsError()
     }
 
     // 2. パスワード検証
@@ -74,7 +90,7 @@ export const authService = {
     )
 
     if (!isValidPassword) {
-      throw new HTTPException(401, { message: 'Invalid email or password' })
+      throw new InvalidCredentialsError()
     }
 
     // 3. ★JWT生成 (共通関数を使用)
