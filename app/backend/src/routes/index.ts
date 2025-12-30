@@ -4,6 +4,7 @@ import { describeRoute, resolver, validator } from 'hono-openapi'
 import z from 'zod'
 import { auth } from './auth/index.js'
 import { demoQuerySchema, demoResponseSchema } from './schema.js'
+import { search } from './search/index.js'
 import { users } from './users/index.js'
 
 export const app = new Hono()
@@ -59,5 +60,6 @@ export const app = new Hono()
   )
   .route('/auth', auth)
   .route('/users', users)
+  .route('/search', search)
 
 export type AppType = typeof app
