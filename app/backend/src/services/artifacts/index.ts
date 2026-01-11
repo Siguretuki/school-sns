@@ -43,7 +43,7 @@ export const artifactsService = {
     return Result.succeed(artifact)
   },
   deleteArtifact: async (artifactId: string, userId: string) => {
-    if (await artifactsRepository.isOwnArtifact(artifactId, userId)) {
+    if (!(await artifactsRepository.isOwnArtifact(artifactId, userId))) {
       return Result.fail(new NotArtifactOwnerError())
     }
     await artifactsRepository.deleteArtifact(artifactId)

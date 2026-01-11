@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { describeRoute, resolver, validator } from 'hono-openapi'
 import z from 'zod'
 import { checkAuth } from '../../middleware/checkAuth.js'
+import type { Variables as AuthVariables } from '../../middleware/checkAuth.js'
 import { scrapsService } from '../../services/scraps/index.js'
 import {
   getScrapsQuerySchema,
@@ -10,7 +11,7 @@ import {
   updateScrapSchema,
 } from './schema.js'
 
-export const scraps = new Hono()
+export const scraps = new Hono<{ Variables: AuthVariables }>()
   .post(
     '/',
     describeRoute({
@@ -93,10 +94,17 @@ export const scraps = new Hono()
         },
       },
     }),
+    checkAuth,
     validator('query', getScrapsQuerySchema),
     async (c) => {
+      const userId = c.var.userId
       const query = c.req.valid('query')
-      const result = await scrapsService.getScraps(query)
+      const isFollowing = query?.isFollowing
+
+      const result = await scrapsService.getScraps(
+        query,
+        isFollowing !== undefined && isFollowing ? { userId } : undefined,
+      )
 
       if (result.type === 'Failure') {
         return c.json(
@@ -201,7 +209,7 @@ export const scraps = new Hono()
           {
             message: result.error.message,
           },
-          500,
+          403,
         )
       }
       return c.json(result.value, 200)

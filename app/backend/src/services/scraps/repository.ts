@@ -36,7 +36,7 @@ export const scrapsRepository = {
   updateScrap: async (
     scrapId: string,
     content: Partial<
-      Omit<Scraps, 'id' | 'createdAt' | 'updateAt' | 'userId' | 'parentId'>
+      Omit<Scraps, 'id' | 'createdAt' | 'updatedAt' | 'userId' | 'parentId'>
     >,
   ) => {
     return await prisma.scraps.update({
@@ -109,6 +109,12 @@ export const scrapsRepository = {
     })
     await prisma.tagScraps.deleteMany({
       where: { scrapId },
+    })
+  },
+  getScrapIdsByTagIds: async (tagIds: string[]) => {
+    return await prisma.tagScraps.findMany({
+      where: { tagId: { in: tagIds } },
+      select: { scrapId: true },
     })
   },
 }

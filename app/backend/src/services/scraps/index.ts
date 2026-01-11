@@ -31,7 +31,7 @@ export const scrapsService = {
     return Result.succeed(scrap)
   },
   deleteScrap: async (scrapId: string, userId: string) => {
-    if (await scrapsRepository.isOwnScrap(scrapId, userId)) {
+    if (!(await scrapsRepository.isOwnScrap(scrapId, userId))) {
       return Result.fail(new NotScrapOwnerError())
     }
     await scrapsRepository.deleteScrap(scrapId)
@@ -51,11 +51,11 @@ export const scrapsService = {
     scrapId: string,
     userId: string,
     content?: Partial<
-      Omit<Scraps, 'id' | 'createdAt' | 'updateAt' | 'userId' | 'parentId'>
+      Omit<Scraps, 'id' | 'createdAt' | 'updatedAt' | 'userId' | 'parentId'>
     >,
     tagIds?: string[],
   ) => {
-    if (await scrapsRepository.isOwnScrap(scrapId, userId)) {
+    if (!(await scrapsRepository.isOwnScrap(scrapId, userId))) {
       return Result.fail(new NotScrapOwnerError())
     }
 

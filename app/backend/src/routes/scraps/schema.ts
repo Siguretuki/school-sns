@@ -11,7 +11,7 @@ const scrapSchema = z.object({
 })
 
 const registerScrapSchema = z.object({
-  parentId: z.string().nullable().optional(),
+  parentId: z.string().nullable().default(null),
   title: z.string().min(1),
   body: z.string(),
   tagIds: z.array(z.string()).optional(),
@@ -25,9 +25,11 @@ const updateScrapSchema = z.object({
 
 const getScrapsQuerySchema = z
   .object({
-    isFollowing: z.boolean().default(false),
-    limit: z.number().min(1).optional(),
-    page: z.number().min(1).optional(),
+    isFollowing: z
+      .preprocess((val) => val === 'true', z.boolean())
+      .default(false),
+    limit: z.coerce.number().min(1).optional(),
+    page: z.coerce.number().min(1).optional(),
   })
   .optional()
 
