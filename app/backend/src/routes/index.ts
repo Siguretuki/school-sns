@@ -5,6 +5,7 @@ import { auth } from './auth/index.js'
 import { media } from './media/index.js'
 import { scraps } from './scraps/index.js'
 import { search } from './search/index.js'
+import { tags } from './tags/index.js'
 import { users } from './users/index.js'
 
 export const app = new Hono()
@@ -21,5 +22,6 @@ export const app = new Hono()
   .route('/media', media)
   .route('/artifacts', artifacts)
   .route('/scraps', scraps)
+  .route('/tags', tags)
 
 export type AppType = typeof app
