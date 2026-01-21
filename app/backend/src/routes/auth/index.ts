@@ -1,30 +1,19 @@
 import { Hono } from 'hono'
-import type { Context } from 'hono'
-import { setCookie } from 'hono/cookie'
 import { jwt } from 'hono/jwt'
 import type { JwtVariables } from 'hono/jwt'
 import { describeRoute, resolver, validator } from 'hono-openapi'
+import { authCookie } from '../../lib/authCookie.js'
+import { env } from '../../lib/env.js'
 import { authService } from '../../services/auth/service.js'
 import type { app } from '../index.js'
 import { loginSchema, signupSchema, authResponseSchema } from './schema.js'
 
 type Variables = JwtVariables
-const JWT_SECRET = process.env.JWT_SECRET ?? 'it-is-very-secret'
-const TOKEN_EXPIRATION_SEC =
-  Number(process.env.TOKEN_EXPIRATION_SEC) || 60 * 60 * 24
 
 const authCheck = jwt({
-  secret: JWT_SECRET,
-  cookie: 'token',
+  secret: env.JWT_SECRET,
+  cookie: authCookie.cookieName,
 })
-const setAuthCookie = (c: Context, token: string) => {
-  setCookie(c, 'token', token, {
-    httpOnly: true,
-    sameSite: 'Lax',
-    path: '/',
-    maxAge: TOKEN_EXPIRATION_SEC,
-  })
-}
 
 export const auth = new Hono<{ Variables: Variables }>()
   .post(
@@ -53,8 +42,7 @@ export const auth = new Hono<{ Variables: Variables }>()
       if (result.type === 'Failure') {
         return c.json({ message: result.error.message }, 409)
       }
-
-      setAuthCookie(c, result.value.token)
+      authCookie.set(c, result.value.token)
       return c.json(result.value, 201)
     },
   )
@@ -84,8 +72,7 @@ export const auth = new Hono<{ Variables: Variables }>()
       if (result.type === 'Failure') {
         return c.json({ message: result.error.message }, 401)
       }
-
-      setAuthCookie(c, result.value.token)
+      authCookie.set(c, result.value.token)
       return c.json(result.value)
     },
   )
@@ -102,13 +89,9 @@ export const auth = new Hono<{ Variables: Variables }>()
       },
     }),
     (c) => {
-      setCookie(c, 'token', '', {
-        httpOnly: true,
-        path: '/',
-        maxAge: 0, // 即座に期限切れにする
-      })
+      authCookie.remove(c)
       authService.logout()
-      return c.json({ message: 'Logged out' })
+      return c.json({ message: 'Logged out' }, 200)
     },
   )
 

@@ -1,26 +1,9 @@
 import { Result } from '@praha/byethrow'
 import * as argon2 from 'argon2'
-import { sign } from 'hono/jwt'
+import { jwt } from '../../lib/jwt.js'
 import type { SignupInput, LoginInput } from '../../routes/auth/schema.js'
 import { EmailAlreadyExistsError, InvalidCredentialsError } from './error.js'
 import { authRepository } from './repository.js'
-
-const JWT_SECRET = process.env.JWT_SECRET ?? 'it-is-very-secret'
-const TOKEN_EXPIRATION_SEC =
-  Number(process.env.TOKEN_EXPIRATION_SEC) || 60 * 60 * 24
-
-/**
- * JWT生成の共通関数
- * SignupとLoginの両方で使用します
- */
-const generateJwt = async (user: { id: string; role: string }) => {
-  const payload = {
-    sub: user.id,
-    role: user.role,
-    exp: Math.floor(Date.now() / 1000) + TOKEN_EXPIRATION_SEC,
-  }
-  return await sign(payload, JWT_SECRET)
-}
 
 export const authService = {
   /**
@@ -40,7 +23,10 @@ export const authService = {
     const user = await authRepository.createUser({ ...input, passwordHash })
 
     // 4. JWT生成 (共通関数を使用)
-    const token = await generateJwt(user)
+    const token = await jwt.generate({
+      id: user.id,
+      role: user.role,
+    })
 
     // 5. UserResponse型に変換して返却
     return Result.succeed({
@@ -79,7 +65,10 @@ export const authService = {
     }
 
     // 3. ★JWT生成 (共通関数を使用)
-    const token = await generateJwt(user)
+    const token = await jwt.generate({
+      id: user.id,
+      role: user.role,
+    })
 
     // 4. UserResponse型に変換して返却
     return Result.succeed({

@@ -55,6 +55,8 @@ model UserRelationships {
   followee Users @relation("followee", fields: [followeeId], references: [id])
   followeeId String
   createdAt DateTime @default(now())
+
+  @@unique([followerId, followeeId])
 }
 
 model Worlds {
@@ -82,15 +84,13 @@ model Artifacts {
   userId String
   title String
   body String
-  summaryByAI String
+  summaryByAI String?
   status ArtifactStatus @default(DRAFT)
   publishedAt DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  comments Comments[]
-
-  tagArticles TagArticles[]
+  tagArtifacts TagArtifacts[]
 
   mentions Mentions[]
 }
@@ -115,30 +115,33 @@ model Comments {
   id String @id @default(uuid(4))
   user Users @relation(fields: [userId], references: [id])
   userId String
-  artifact Artifacts @relation(fields: [artifactId], references: [id])
-  artifactId String
+  parent Comments? @relation("CommentToParent", fields: [parentId], references: [id])
+  parentId String?
+
   body String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  comments Comments[] @relation("CommentToParent")
 }
 
 model Tags {
   id String @id @default(uuid(4))
   name String @unique
-  slug String @unique
+  slug String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  tagArticles TagArticles[]
+  tagArtifacts TagArtifacts[]
 
   tagScraps TagScraps[]
 }
 
-model TagArticles {
+model TagArtifacts {
   id String @id @default(uuid(4))
   artifact Artifacts @relation(fields: [artifactId], references: [id])
   artifactId String
-  tag Tags @relation(fields: [tagId], references: [id])
+  tag Tags @relation(fields: [tagId], references: [id], onDelete: Cascade)
   tagId String
   createdAt DateTime @default(now())
 }
@@ -149,7 +152,7 @@ model Assets {
   userId String
   url String
   fileType String
-  originName String
+  originalName String
   sizeBytes BigInt
   createdAt DateTime @default(now())
 }
@@ -167,7 +170,7 @@ model TagScraps {
   id String @id @default(uuid(4))
   scrap Scraps @relation(fields: [scrapId], references: [id])
   scrapId String
-  tag Tags @relation(fields: [tagId], references: [id])
+  tag Tags @relation(fields: [tagId], references: [id], onDelete: Cascade)
   tagId String
   createdAt DateTime @default(now())
 }

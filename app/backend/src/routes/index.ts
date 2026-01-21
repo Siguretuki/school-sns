@@ -1,61 +1,27 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
-import { describeRoute, resolver, validator } from 'hono-openapi'
-import z from 'zod'
+import { artifacts } from './artifacts/index.js'
 import { auth } from './auth/index.js'
-import { demoQuerySchema, demoResponseSchema } from './schema.js'
+import { media } from './media/index.js'
+import { scraps } from './scraps/index.js'
+import { search } from './search/index.js'
+import { tags } from './tags/index.js'
+import { users } from './users/index.js'
 
 export const app = new Hono()
+  .basePath('/api/v2')
   .use(
     '*',
     cors({
       origin: ['http://localhost:3157'],
     }),
   )
-  .get(
-    '/',
-    describeRoute({
-      description: 'Say Hello from Hono',
-      responses: {
-        200: {
-          description: 'Successful Response',
-          content: {
-            'text/plain': {
-              schema: resolver(z.string()),
-            },
-          },
-        },
-      },
-    }),
-    (c) => {
-      return c.text('Hello Hono!')
-    },
-  )
-  .get(
-    '/demo',
-    describeRoute({
-      description: 'Demo endpoint',
-      responses: {
-        200: {
-          description: 'Successful Response',
-          content: {
-            'application/json': {
-              schema: resolver(demoResponseSchema),
-            },
-          },
-        },
-      },
-    }),
-    validator('query', demoQuerySchema),
-    (c) => {
-      const { kind } = c.req.valid('query')
-      if (kind === 'positive') {
-        return c.json({ message: 'This is a positive message! 😊' })
-      } else {
-        return c.json({ message: 'This is a negative message! 😞' })
-      }
-    },
-  )
   .route('/auth', auth)
+  .route('/users', users)
+  .route('/search', search)
+  .route('/media', media)
+  .route('/artifacts', artifacts)
+  .route('/scraps', scraps)
+  .route('/tags', tags)
 
 export type AppType = typeof app

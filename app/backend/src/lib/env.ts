@@ -12,6 +12,12 @@ const zStrEnv = z.string().min(1, 'is required')
 
 const EnvSchema = z.object({
   DATABASE_URL: zStrEnv,
+  JWT_SECRET: zStrEnv,
+  TOKEN_EXPIRATION_SEC: z
+    .string()
+    .nullable()
+    .transform((val) => Number(val) || null),
+  LLM_PROVIDER: z.enum(['fake', 'gemini']).default('fake'),
 })
 
 const validateEnv = () => {
