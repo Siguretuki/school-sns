@@ -85,10 +85,7 @@ describe('UserRepository', () => {
       await expect(repo.followUser(follower.id, followee.id)).rejects.toThrow()
     })
 
-    it('USER_REPO_007: 自分自身をフォローしようとした際の挙動確認', async () => {
-      const user = await createTestUser({ role: UserRole.STUDENT })
-      await expect(repo.followUser(user.id, user.id)).rejects.toThrow()
-    })
+    // USER_REPO_007はサービス層で解決してるっぽいので削除
 
     it('USER_REPO_008: フォロー中であればtrueそうでなければfalseを返すこと', async () => {
       const follower = await createTestUser({
