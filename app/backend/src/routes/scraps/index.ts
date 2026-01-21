@@ -3,6 +3,7 @@ import { describeRoute, resolver, validator } from 'hono-openapi'
 import z from 'zod'
 import { checkAuth } from '../../middleware/checkAuth.js'
 import type { Variables as AuthVariables } from '../../middleware/checkAuth.js'
+import { NotScrapOwnerError } from '../../services/scraps/error.js'
 import { scrapsService } from '../../services/scraps/index.js'
 import {
   getScrapsQuerySchema,
@@ -195,8 +196,11 @@ export const scraps = new Hono<{ Variables: AuthVariables }>()
             },
           },
         },
-        500: {
-          description: 'Internal Server Error',
+        400: {
+          description: 'Bad Request',
+        },
+        403: {
+          description: 'Forbidden',
         },
       },
     }),
@@ -211,7 +215,7 @@ export const scraps = new Hono<{ Variables: AuthVariables }>()
           {
             message: result.error.message,
           },
-          500,
+          result.error instanceof NotScrapOwnerError ? 403 : 400,
         )
       }
       return c.json(

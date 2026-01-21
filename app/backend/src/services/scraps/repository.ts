@@ -120,4 +120,18 @@ export const scrapsRepository = {
       select: { scrapId: true },
     })
   },
+  hasChildren: async (scrapId: string) => {
+    return (
+      (await prisma.scraps.findFirst({
+        where: { parentId: scrapId },
+        select: { id: true },
+      })) !== null
+    )
+  },
+  updateChildrenParentId: async (scrapId: string, parentId: string | null) => {
+    await prisma.scraps.updateMany({
+      where: { parentId: scrapId },
+      data: { parentId },
+    })
+  },
 }

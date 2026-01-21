@@ -12,4 +12,17 @@ class NotScrapOwnerError extends Error {
   }
 }
 
-export { NotScrapOwnerError, ScrapNotFoundError }
+class CannotDeleteRootScrapWithChildrenError extends Error {
+  constructor(
+    message: string = 'Cannot delete a root scrap that has child scraps.',
+  ) {
+    super(message)
+    this.name = 'CannotDeleteRootScrapWithChildrenError'
+  }
+}
+
+export {
+  CannotDeleteRootScrapWithChildrenError,
+  NotScrapOwnerError,
+  ScrapNotFoundError,
+}
