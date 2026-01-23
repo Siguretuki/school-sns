@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@hono/node-server": "^1.19.6",
+    "@hono/oauth-providers": "^0.8.5",
     "@hono/standard-validator": "^0.2.1",
     "@hono/swagger-ui": "^0.5.2",
     "@langchain/core": "^1.1.8",
@@ -28,15 +29,18 @@
     "dotenv": "^17.2.3",
     "hono": "^4.11.0",
     "hono-openapi": "^1.1.2",
+    "ioredis": "^5.9.2",
     "langchain": "^1.2.3",
     "zod": "^4.2.1"
   },
   "devDependencies": {
     "@hono/eslint-config": "^2.0.3",
     "@types/better-sqlite3": "^7.6.13",
+    "@types/ioredis-mock": "^8.2.6",
     "@types/node": "^20.19.26",
     "@vitest/coverage-v8": "catalog:",
     "eslint": "catalog:",
+    "ioredis-mock": "^8.13.1",
     "prettier": "catalog:",
     "prisma": "^7.2.0",
     "tsx": "^4.7.1",
