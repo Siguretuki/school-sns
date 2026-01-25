@@ -16,7 +16,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: () => (
     <div className="flex flex-col h-dvh">
       <Header />
-      <div className="flex-1 overflow-y-auto bg-slate-200">
+      <div className="flex-1 overflow-y-auto bg-slate-200 scrollbar-hidden">
         <Outlet />
       </div>
       <Footer />
