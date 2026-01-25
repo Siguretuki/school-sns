@@ -14,6 +14,7 @@ export const app = new Hono()
     '*',
     cors({
       origin: ['http://localhost:3157'],
+      credentials: true,
     }),
   )
   .route('/auth', auth)

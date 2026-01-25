@@ -1,8 +1,7 @@
 import { Hono } from 'hono'
 import { describeRoute, resolver, validator } from 'hono-openapi'
 import z from 'zod'
-import { checkAuth } from '../../middleware/checkAuth.js'
-import type { Variables as AuthVariables } from '../../middleware/checkAuth.js'
+import { authCheck } from '../../middleware/authCheck.js'
 import { NotScrapOwnerError } from '../../services/scraps/error.js'
 import { scrapsService } from '../../services/scraps/index.js'
 import {
@@ -12,7 +11,7 @@ import {
   updateScrapSchema,
 } from './schema.js'
 
-export const scraps = new Hono<{ Variables: AuthVariables }>()
+export const scraps = new Hono()
   .post(
     '/',
     describeRoute({
@@ -32,11 +31,11 @@ export const scraps = new Hono<{ Variables: AuthVariables }>()
         },
       },
     }),
-    checkAuth,
+    authCheck,
     validator('json', registerScrapSchema),
     async (c) => {
       const { tagIds, ...data } = c.req.valid('json')
-      const userId = c.var.userId
+      const userId = c.var.user.userId
       const result = await scrapsService.addScrap(
         {
           userId,
@@ -75,10 +74,10 @@ export const scraps = new Hono<{ Variables: AuthVariables }>()
         },
       },
     }),
-    checkAuth,
+    authCheck,
     validator('query', getScrapsQuerySchema),
     async (c) => {
-      const userId = c.var.userId
+      const userId = c.var.user.userId
       const query = c.req.valid('query')
       const isFollowing = query?.isFollowing
 
@@ -151,12 +150,12 @@ export const scraps = new Hono<{ Variables: AuthVariables }>()
         },
       },
     }),
-    checkAuth,
+    authCheck,
     validator('json', updateScrapSchema),
     async (c) => {
       const { scrapId } = c.req.param()
       const date = c.req.valid('json')
-      const userId = c.var.userId
+      const userId = c.var.user.userId
       const result = await scrapsService.updateScrap(
         scrapId,
         userId,
@@ -204,10 +203,10 @@ export const scraps = new Hono<{ Variables: AuthVariables }>()
         },
       },
     }),
-    checkAuth,
+    authCheck,
     async (c) => {
       const { scrapId } = c.req.param()
-      const userId = c.var.userId
+      const userId = c.var.user.userId
       const result = await scrapsService.deleteScrap(scrapId, userId)
 
       if (result.type == 'Failure') {

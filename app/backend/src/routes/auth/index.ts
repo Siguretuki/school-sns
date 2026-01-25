@@ -1,50 +1,17 @@
 import { googleAuth } from '@hono/oauth-providers/google'
-import type { GoogleUser } from '@hono/oauth-providers/google'
 import { Hono } from 'hono'
-import { getCookie, setCookie } from 'hono/cookie'
-import { createMiddleware } from 'hono/factory'
+import { setCookie } from 'hono/cookie'
 import { describeRoute, resolver, validator } from 'hono-openapi'
 import { authCookie } from '../../lib/authCookie.js'
 import { env } from '../../lib/env.js'
-import { createSession, getSession } from '../../lib/redis.js'
+import { createSession } from '../../lib/redis.js'
+import { authCheck } from '../../middleware/authCheck.js'
+import type { Variables as AuthVariables } from '../../middleware/authCheck.js'
 import { authService } from '../../services/auth/service.js'
 import type { app } from '../index.js'
 import { loginSchema, signupSchema, authResponseSchema } from './schema.js'
 
-interface SessionUser {
-  userId: string
-  role: string
-}
-
-interface Variables {
-  'user-google'?: GoogleUser
-  user?: SessionUser
-}
-
-const authCheck = createMiddleware<{ Variables: Variables }>(
-  async (c, next) => {
-    const sessionId = getCookie(c, authCookie.cookieName)
-    if (!sessionId) {
-      return c.json({ message: 'Unauthorized: No session ID' }, 401)
-    }
-
-    const session = await getSession<SessionUser>(sessionId)
-
-    if (!session) {
-      // Redisにデータがない = 有効期限切れ or 不正なID
-      return c.json(
-        { message: 'Unauthorized: Invalid or expired session' },
-        401,
-      )
-    }
-
-    c.set('user', session.data)
-
-    await next()
-  },
-)
-
-export const auth = new Hono<{ Variables: Variables }>()
+export const auth = new Hono<{ Variables: AuthVariables }>()
   .post(
     '/signup',
     describeRoute({
@@ -165,7 +132,7 @@ export const auth = new Hono<{ Variables: Variables }>()
     }),
     async (c) => {
       // 1. Googleからユーザー情報を取得
-      const googleUser = c.get('user-google')
+      const googleUser = c.var['user-google']
 
       if (!googleUser) {
         return c.json({ message: 'Google authentication failed' }, 401)

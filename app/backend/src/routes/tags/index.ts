@@ -1,8 +1,7 @@
 import { Hono } from 'hono'
 import { describeRoute, resolver, validator } from 'hono-openapi'
 import z from 'zod'
-import { checkAuth } from '../../middleware/checkAuth.js'
-import type { Variables as AuthVariables } from '../../middleware/checkAuth.js'
+import { authCheck } from '../../middleware/authCheck.js'
 import { tagsService } from '../../services/tags/index.js'
 import {
   addTagSchema,
@@ -11,7 +10,7 @@ import {
   updateTagSchema,
 } from './schema.js'
 
-export const tags = new Hono<{ Variables: AuthVariables }>()
+export const tags = new Hono()
   .get(
     '/',
     describeRoute({
@@ -175,10 +174,10 @@ export const tags = new Hono<{ Variables: AuthVariables }>()
         },
       },
     }),
-    checkAuth,
+    authCheck,
     async (c) => {
       const { tagId } = c.req.param()
-      const userId = c.var.userId
+      const userId = c.var.user.userId
 
       const result = await tagsService.deleteTag(tagId, userId)
       if (result.type === 'Failure') {

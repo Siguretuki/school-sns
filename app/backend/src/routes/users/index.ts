@@ -1,8 +1,7 @@
 import { Hono } from 'hono'
 import { describeRoute, resolver, validator } from 'hono-openapi'
 import z from 'zod'
-import { checkAuth } from '../../middleware/checkAuth.js'
-import type { Variables as AuthVariables } from '../../middleware/checkAuth.js'
+import { authCheck } from '../../middleware/authCheck.js'
 import { CannotFollowSelfError } from '../../services/users/error.js'
 import { usersService } from '../../services/users/index.js'
 import {
@@ -11,7 +10,7 @@ import {
   userArtifactsResponseSchema,
 } from './schema.js'
 
-export const users = new Hono<{ Variables: AuthVariables }>()
+export const users = new Hono()
   .get(
     '/me',
     describeRoute({
@@ -31,9 +30,9 @@ export const users = new Hono<{ Variables: AuthVariables }>()
         },
       },
     }),
-    checkAuth,
+    authCheck,
     async (c) => {
-      const userId = c.var.userId
+      const userId = c.var.user.userId
       const result = await usersService.getUserDetail(userId)
 
       if (result.type === 'Failure') {
@@ -62,9 +61,9 @@ export const users = new Hono<{ Variables: AuthVariables }>()
       },
     }),
     validator('json', editUserRequestSchema),
-    checkAuth,
+    authCheck,
     async (c) => {
-      const userId = c.var.userId
+      const userId = c.var.user.userId
       const input = c.req.valid('json')
       const result = await usersService.editUser(userId, input)
 
@@ -130,10 +129,10 @@ export const users = new Hono<{ Variables: AuthVariables }>()
         },
       },
     }),
-    checkAuth,
+    authCheck,
     async (c) => {
       const { userId: targetUserId } = c.req.param()
-      const userId = c.get('userId')
+      const userId = c.var.user.userId
       const result = await usersService.followUser(userId, targetUserId)
       if (result.type === 'Failure') {
         return c.json(
@@ -165,10 +164,10 @@ export const users = new Hono<{ Variables: AuthVariables }>()
         },
       },
     }),
-    checkAuth,
+    authCheck,
     async (c) => {
       const { userId: targetUserId } = c.req.param()
-      const userId = c.var.userId
+      const userId = c.var.user.userId
       await usersService.cancelFollower(userId, targetUserId)
       return c.json(
         {

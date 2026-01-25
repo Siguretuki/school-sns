@@ -28,6 +28,8 @@ export const scrapsService = {
 
     const scraps = await scrapsRepository.getScraps({
       ...options,
+      onlyRootScraps: options?.onlyRootScraps ?? true,
+      includeUserInfo: options?.includeUserInfo ?? true,
       userIds,
       ids,
     })

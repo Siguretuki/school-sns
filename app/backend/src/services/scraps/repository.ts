@@ -10,18 +10,33 @@ export const scrapsRepository = {
     })
   },
   getScraps: async (
-    options: ScrapOptions & { ids?: string[]; userIds?: string[] } = {},
+    options: ScrapOptions & { ids?: string[]; userIds?: string[] } = {
+      onlyRootScraps: true,
+      includeUserInfo: true,
+    },
   ) => {
     return await prisma.scraps.findMany({
       where: {
         id: options.ids ? { in: options.ids } : undefined,
         userId: options.userIds ? { in: options.userIds } : undefined,
+        parentId: options.onlyRootScraps ? null : undefined,
       },
       take: options.limit,
       skip:
         options.page && options.limit
           ? (options.page - 1) * options.limit
           : undefined,
+      include: {
+        user: options.includeUserInfo
+          ? {
+              select: {
+                id: true,
+                userName: true,
+                avatarUrl: true,
+              },
+            }
+          : undefined,
+      },
     })
   },
   getScrapById: async (scrapId: string) => {

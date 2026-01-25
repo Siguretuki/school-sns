@@ -1,8 +1,7 @@
 import { Hono } from 'hono'
 import { describeRoute, resolver, validator } from 'hono-openapi'
 import type { Assets } from '../../../generated/prisma/client.js'
-import { checkAuth } from '../../middleware/checkAuth.js'
-import type { Variables as AuthVariables } from '../../middleware/checkAuth.js'
+import { authCheck } from '../../middleware/authCheck.js'
 import { mediaService } from '../../services/media/index.js'
 import { getMediaQuerySchema, mediaResponseSchema } from './schema.js'
 
@@ -11,7 +10,7 @@ const responseFormatter = (asset: Assets) => ({
   sizeBytes: Number(asset.sizeBytes),
 })
 
-export const media = new Hono<{ Variables: AuthVariables }>()
+export const media = new Hono()
   .post(
     '/upload',
     describeRoute({
@@ -52,7 +51,7 @@ export const media = new Hono<{ Variables: AuthVariables }>()
         },
       },
     }),
-    checkAuth,
+    authCheck,
     async (c) => {
       const body = await c.req.parseBody()
       const file = body.file
@@ -60,7 +59,7 @@ export const media = new Hono<{ Variables: AuthVariables }>()
         return c.json({ error: 'Invalid file upload' }, 400)
       }
 
-      const userId = c.var.userId
+      const userId = c.var.user.userId
       const result = await mediaService.upload(userId, file)
 
       if (result.type === 'Failure') {
@@ -88,10 +87,10 @@ export const media = new Hono<{ Variables: AuthVariables }>()
         },
       },
     }),
-    checkAuth,
+    authCheck,
     validator('query', getMediaQuerySchema),
     async (c) => {
-      const userId = c.var.userId
+      const userId = c.var.user.userId
       const query = c.req.valid('query')
       const result = await mediaService.getUserMedia(userId, query)
 
@@ -115,9 +114,9 @@ export const media = new Hono<{ Variables: AuthVariables }>()
         },
       },
     }),
-    checkAuth,
+    authCheck,
     async (c) => {
-      const userId = c.var.userId
+      const userId = c.var.user.userId
       const mediaId = c.req.param('mediaId')
       const result = await mediaService.deleteMedia(mediaId, userId)
 

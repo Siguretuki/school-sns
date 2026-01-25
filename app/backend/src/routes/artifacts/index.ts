@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { describeRoute, resolver, validator } from 'hono-openapi'
 import z from 'zod'
-import { checkAuth } from '../../middleware/checkAuth.js'
+import { authCheck } from '../../middleware/authCheck.js'
 import { ArtifactNotFoundError } from '../../services/artifacts/error.js'
 import { artifactsService } from '../../services/artifacts/index.js'
 import {
@@ -31,10 +31,10 @@ export const artifacts = new Hono()
         },
       },
     }),
-    checkAuth,
+    authCheck,
     validator('json', registerArtifactSchema),
     async (c) => {
-      const userId = c.var.userId
+      const userId = c.var.user.userId
       const { tagIds, ...data } = c.req.valid('json')
 
       const result = await artifactsService.addArtifact(
@@ -72,10 +72,10 @@ export const artifacts = new Hono()
         },
       },
     }),
-    checkAuth,
+    authCheck,
     validator('query', getArtifactsQuerySchema),
     async (c) => {
-      const userId = c.var.userId
+      const userId = c.var.user.userId
       const query = c.req.valid('query')
       const isFollowing = query?.isFollowing
 
@@ -149,11 +149,11 @@ export const artifacts = new Hono()
         },
       },
     }),
-    checkAuth,
+    authCheck,
     validator('json', updateArtifactSchema),
     async (c) => {
       const { artifactId } = c.req.param()
-      const userId = c.var.userId
+      const userId = c.var.user.userId
       const { tagIds, ...data } = c.req.valid('json')
       const result = await artifactsService.updateArtifact(artifactId, userId, {
         content: data,
@@ -182,10 +182,10 @@ export const artifacts = new Hono()
       tags: ['artifacts'],
       description: 'Get artifact detail',
     }),
-    checkAuth,
+    authCheck,
     async (c) => {
       const { artifactId } = c.req.param()
-      const userId = c.var.userId
+      const userId = c.var.user.userId
       const result = await artifactsService.deleteArtifact(artifactId, userId)
 
       if (result.type == 'Failure') {

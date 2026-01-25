@@ -36,6 +36,12 @@ const getScrapsQuerySchema = z
       .optional(),
     limit: z.coerce.number().min(1).optional(),
     page: z.coerce.number().min(1).optional(),
+    onlyRootScraps: z
+      .preprocess((val) => val === 'true', z.boolean())
+      .default(true),
+    includeUserInfo: z
+      .preprocess((val) => val === 'true', z.boolean())
+      .default(true),
   })
   .optional()
 
