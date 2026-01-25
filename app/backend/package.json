@@ -31,7 +31,7 @@
     "hono-openapi": "^1.1.2",
     "ioredis": "^5.9.2",
     "langchain": "^1.2.3",
-    "zod": "^4.2.1"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@hono/eslint-config": "^2.0.3",
