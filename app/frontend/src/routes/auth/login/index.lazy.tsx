@@ -1,33 +1,42 @@
 import { Link, createLazyFileRoute } from '@tanstack/react-router'
 import { GraduationCap } from 'lucide-react'
 import Card from '@/components/ui/Card'
+import GoogleLoginButton from '@/components/ui/GoogleLoginButton'
 import LoginForm from '@/features/auth/login/components/LoginForm'
+import OauthOrDivider from '@/features/auth/components/OauthOrDivider'
 
 export const Route = createLazyFileRoute('/auth/login/')({
-  component: RouteComponent,
+  component: LoginPage,
 })
 
-function RouteComponent() {
+export function LoginPage() {
   return (
-    <div className="flex flex-col items-center justify-center h-full py-8">
-      <div className="flex flex-col gap-5 items-center">
-        <span className="p-3 bg-slate-300/70 w-fit h-fit rounded-3xl">
-          <GraduationCap size={45} className="text-slate-800" />
-        </span>
-        <div className="flex flex-col items-center gap-2">
-          <h2 className="font-bold text-4xl">おかえりなさい</h2>
-          <p className="text-md">学内コミュニティにようこそ</p>
+    <div className="relative flex min-h-dvh items-center justify-center bg-slate-50 px-4 py-10 text-slate-800 overflow-hidden">
+      <div className="relative flex w-full max-w-md flex-col gap-6">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-200 shadow-sm">
+            <GraduationCap size={28} className="text-slate-800" />
+          </span>
+          <div className="flex flex-col gap-1 items-center">
+            <h1 className="text-3xl font-semibold">おかえりなさい</h1>
+            <p className="text-sm text-slate-500">学内コミュニティへようこそ</p>
+          </div>
         </div>
-      </div>
-      <div className="flex-1 flex justify-center">
-        <Card className="h-fit m-auto bg-slate-50">
-          <LoginForm />
+
+        <Card className="bg-white p-6 shadow-xl">
+          <div className="flex flex-col gap-5">
+            <LoginForm />
+            <OauthOrDivider />
+            <GoogleLoginButton />
+          </div>
         </Card>
-      </div>
-      <div>
-        <p className="text-sm text-slate-500 flex gap-1 flex-wrap justify-center">
-          <span>アカウントをお持ちでないですか?</span>
-          <Link to="/auth/signup" className="font-bold text-slate-800">
+
+        <p className="text-center text-sm text-slate-500">
+          <span>アカウントをお持ちでないですか? </span>
+          <Link
+            to="/auth/signup"
+            className="font-semibold text-slate-800 hover:text-slate-700 transition-colors"
+          >
             新規登録はこちら
           </Link>
         </p>

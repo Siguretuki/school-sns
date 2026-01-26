@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import type { LoginRequestBody } from '@/api/routes/auth/type'
 import { usersKeys } from '@/api/routes/users/key'
-import { apiClient } from '@/api/shared/apiClient'
+import { apiBaseUrl, apiClient } from '@/api/shared/apiClient'
 import { ApiError } from '@/api/shared/error'
 
 const useLoginMutation = () => {
@@ -24,4 +24,14 @@ const useLoginMutation = () => {
     },
   })
 }
-export { useLoginMutation }
+
+const useGoogleLoginMutation = () => {
+  return useMutation({
+    mutationFn: () => {
+      window.location.assign(`${apiBaseUrl}/api/v2/auth/google`)
+      return Promise.resolve()
+    },
+  })
+}
+
+export { useLoginMutation, useGoogleLoginMutation }
