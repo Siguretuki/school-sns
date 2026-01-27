@@ -16,6 +16,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as TimelineScrapsIndexRouteImport } from './routes/timeline/scraps/index'
 import { Route as TimelineArtifactsIndexRouteImport } from './routes/timeline/artifacts/index'
 import { Route as SearchResultIndexRouteImport } from './routes/search/result/index'
+import { Route as AuthSignupIndexRouteImport } from './routes/auth/signup/index'
 import { Route as ProfileIdUserNameIndexRouteImport } from './routes/profile/$id/$userName/index'
 import { Route as TimelineScrapsEditIdIndexRouteImport } from './routes/timeline/scraps/edit/$id/index'
 import { Route as TimelineScrapsDetailIdIndexRouteImport } from './routes/timeline/scraps/detail/$id/index'
@@ -24,7 +25,6 @@ import { Route as TimelineArtifactsDetailIdIndexRouteImport } from './routes/tim
 
 const SettingsIndexLazyRouteImport = createFileRoute('/settings/')()
 const SearchIndexLazyRouteImport = createFileRoute('/search/')()
-const AuthSignupIndexLazyRouteImport = createFileRoute('/auth/signup/')()
 const AuthLoginIndexLazyRouteImport = createFileRoute('/auth/login/')()
 const TimelineScrapsCreateIndexLazyRouteImport = createFileRoute(
   '/timeline/scraps/create/',
@@ -55,13 +55,6 @@ const SearchIndexLazyRoute = SearchIndexLazyRouteImport.update({
   path: '/search/',
   getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./routes/search/index.lazy').then((d) => d.Route))
-const AuthSignupIndexLazyRoute = AuthSignupIndexLazyRouteImport.update({
-  id: '/auth/signup/',
-  path: '/auth/signup/',
-  getParentRoute: () => rootRouteImport,
-} as any).lazy(() =>
-  import('./routes/auth/signup/index.lazy').then((d) => d.Route),
-)
 const AuthLoginIndexLazyRoute = AuthLoginIndexLazyRouteImport.update({
   id: '/auth/login/',
   path: '/auth/login/',
@@ -89,6 +82,13 @@ const SearchResultIndexRoute = SearchResultIndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any).lazy(() =>
   import('./routes/search/result/index.lazy').then((d) => d.Route),
+)
+const AuthSignupIndexRoute = AuthSignupIndexRouteImport.update({
+  id: '/auth/signup/',
+  path: '/auth/signup/',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() =>
+  import('./routes/auth/signup/index.lazy').then((d) => d.Route),
 )
 const TimelineScrapsCreateIndexLazyRoute =
   TimelineScrapsCreateIndexLazyRouteImport.update({
@@ -159,11 +159,11 @@ export interface FileRoutesByFullPath {
   '/timeline': typeof TimelineRouteRouteWithChildren
   '/search/': typeof SearchIndexLazyRoute
   '/settings/': typeof SettingsIndexLazyRoute
+  '/auth/signup/': typeof AuthSignupIndexRoute
   '/search/result/': typeof SearchResultIndexRoute
   '/timeline/artifacts/': typeof TimelineArtifactsIndexRoute
   '/timeline/scraps/': typeof TimelineScrapsIndexRoute
   '/auth/login/': typeof AuthLoginIndexLazyRoute
-  '/auth/signup/': typeof AuthSignupIndexLazyRoute
   '/profile/$id/$userName/': typeof ProfileIdUserNameIndexRoute
   '/timeline/artifacts/create/': typeof TimelineArtifactsCreateIndexLazyRoute
   '/timeline/scraps/create/': typeof TimelineScrapsCreateIndexLazyRoute
@@ -177,11 +177,11 @@ export interface FileRoutesByTo {
   '/timeline': typeof TimelineRouteRouteWithChildren
   '/search': typeof SearchIndexLazyRoute
   '/settings': typeof SettingsIndexLazyRoute
+  '/auth/signup': typeof AuthSignupIndexRoute
   '/search/result': typeof SearchResultIndexRoute
   '/timeline/artifacts': typeof TimelineArtifactsIndexRoute
   '/timeline/scraps': typeof TimelineScrapsIndexRoute
   '/auth/login': typeof AuthLoginIndexLazyRoute
-  '/auth/signup': typeof AuthSignupIndexLazyRoute
   '/profile/$id/$userName': typeof ProfileIdUserNameIndexRoute
   '/timeline/artifacts/create': typeof TimelineArtifactsCreateIndexLazyRoute
   '/timeline/scraps/create': typeof TimelineScrapsCreateIndexLazyRoute
@@ -196,11 +196,11 @@ export interface FileRoutesById {
   '/timeline': typeof TimelineRouteRouteWithChildren
   '/search/': typeof SearchIndexLazyRoute
   '/settings/': typeof SettingsIndexLazyRoute
+  '/auth/signup/': typeof AuthSignupIndexRoute
   '/search/result/': typeof SearchResultIndexRoute
   '/timeline/artifacts/': typeof TimelineArtifactsIndexRoute
   '/timeline/scraps/': typeof TimelineScrapsIndexRoute
   '/auth/login/': typeof AuthLoginIndexLazyRoute
-  '/auth/signup/': typeof AuthSignupIndexLazyRoute
   '/profile/$id/$userName/': typeof ProfileIdUserNameIndexRoute
   '/timeline/artifacts/create/': typeof TimelineArtifactsCreateIndexLazyRoute
   '/timeline/scraps/create/': typeof TimelineScrapsCreateIndexLazyRoute
@@ -216,11 +216,11 @@ export interface FileRouteTypes {
     | '/timeline'
     | '/search/'
     | '/settings/'
+    | '/auth/signup/'
     | '/search/result/'
     | '/timeline/artifacts/'
     | '/timeline/scraps/'
     | '/auth/login/'
-    | '/auth/signup/'
     | '/profile/$id/$userName/'
     | '/timeline/artifacts/create/'
     | '/timeline/scraps/create/'
@@ -234,11 +234,11 @@ export interface FileRouteTypes {
     | '/timeline'
     | '/search'
     | '/settings'
+    | '/auth/signup'
     | '/search/result'
     | '/timeline/artifacts'
     | '/timeline/scraps'
     | '/auth/login'
-    | '/auth/signup'
     | '/profile/$id/$userName'
     | '/timeline/artifacts/create'
     | '/timeline/scraps/create'
@@ -252,11 +252,11 @@ export interface FileRouteTypes {
     | '/timeline'
     | '/search/'
     | '/settings/'
+    | '/auth/signup/'
     | '/search/result/'
     | '/timeline/artifacts/'
     | '/timeline/scraps/'
     | '/auth/login/'
-    | '/auth/signup/'
     | '/profile/$id/$userName/'
     | '/timeline/artifacts/create/'
     | '/timeline/scraps/create/'
@@ -271,9 +271,9 @@ export interface RootRouteChildren {
   TimelineRouteRoute: typeof TimelineRouteRouteWithChildren
   SearchIndexLazyRoute: typeof SearchIndexLazyRoute
   SettingsIndexLazyRoute: typeof SettingsIndexLazyRoute
+  AuthSignupIndexRoute: typeof AuthSignupIndexRoute
   SearchResultIndexRoute: typeof SearchResultIndexRoute
   AuthLoginIndexLazyRoute: typeof AuthLoginIndexLazyRoute
-  AuthSignupIndexLazyRoute: typeof AuthSignupIndexLazyRoute
   ProfileIdUserNameIndexRoute: typeof ProfileIdUserNameIndexRoute
 }
 
@@ -307,13 +307,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SearchIndexLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth/signup/': {
-      id: '/auth/signup/'
-      path: '/auth/signup'
-      fullPath: '/auth/signup/'
-      preLoaderRoute: typeof AuthSignupIndexLazyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/auth/login/': {
       id: '/auth/login/'
       path: '/auth/login'
@@ -340,6 +333,13 @@ declare module '@tanstack/react-router' {
       path: '/search/result'
       fullPath: '/search/result/'
       preLoaderRoute: typeof SearchResultIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/signup/': {
+      id: '/auth/signup/'
+      path: '/auth/signup'
+      fullPath: '/auth/signup/'
+      preLoaderRoute: typeof AuthSignupIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/timeline/scraps/create/': {
@@ -425,9 +425,9 @@ const rootRouteChildren: RootRouteChildren = {
   TimelineRouteRoute: TimelineRouteRouteWithChildren,
   SearchIndexLazyRoute: SearchIndexLazyRoute,
   SettingsIndexLazyRoute: SettingsIndexLazyRoute,
+  AuthSignupIndexRoute: AuthSignupIndexRoute,
   SearchResultIndexRoute: SearchResultIndexRoute,
   AuthLoginIndexLazyRoute: AuthLoginIndexLazyRoute,
-  AuthSignupIndexLazyRoute: AuthSignupIndexLazyRoute,
   ProfileIdUserNameIndexRoute: ProfileIdUserNameIndexRoute,
 }
 export const routeTree = rootRouteImport

@@ -4,10 +4,17 @@ import { cn } from '@/utils/cn'
 
 interface Props {
   className?: string
+  label?: string
+  ariaLabel?: string
 }
 
-const GoogleLoginButton: React.FC<Props> = ({ className }) => {
+const GoogleLoginButton: React.FC<Props> = ({
+  className,
+  label = 'Googleでログイン',
+  ariaLabel,
+}) => {
   const googleLoginMutation = useGoogleLoginMutation()
+  const buttonLabel = ariaLabel ?? label
 
   return (
     <button
@@ -19,7 +26,7 @@ const GoogleLoginButton: React.FC<Props> = ({ className }) => {
         googleLoginMutation.isPending && 'cursor-not-allowed opacity-70',
         className,
       )}
-      aria-label="Googleでログイン"
+      aria-label={buttonLabel}
     >
       <span className="flex h-5 w-5 items-center justify-center">
         <svg
@@ -46,7 +53,7 @@ const GoogleLoginButton: React.FC<Props> = ({ className }) => {
           />
         </svg>
       </span>
-      <span>Googleでログイン</span>
+      <span>{label}</span>
     </button>
   )
 }
