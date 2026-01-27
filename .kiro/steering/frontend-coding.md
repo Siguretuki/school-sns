@@ -42,7 +42,7 @@ interface Props {
   disabled?: boolean;
 }
 
-const Button: React.FC<Props> = ({children, className, disabled = false}) => {
+const Button: React.FC<Props> = ({ children, className, disabled = false }) => {
   // ...
 };
 
@@ -54,9 +54,9 @@ export default Button; // default export
 `cn()` ユーティリティで基本スタイルとカスタムクラスをマージ。
 
 ```tsx
-import {cn} from "@/utils/cn";
+import { cn } from "@/utils/cn";
 
-const Card: React.FC<Props> = ({children, className}) => {
+const Card: React.FC<Props> = ({ children, className }) => {
   return (
     <div className={cn("rounded-xl shadow-lg p-4", className)}>{children}</div>
   );
@@ -99,7 +99,7 @@ export const usersKeys = {
   me: () => [...usersKeys.all, "me"] as const,
   lists: () => [...usersKeys.all, "lists"] as const,
   list: (query?: Record<string, unknown>) =>
-    [...usersKeys.lists(), {query}] as const,
+    [...usersKeys.lists(), { query }] as const,
   details: () => [...usersKeys.all, "details"] as const,
   detail: (id: string) => [...usersKeys.details(), id] as const,
 };
@@ -150,13 +150,13 @@ const loginFormSchema = z.object({
 
 export const useLoginForm = () => {
   const form = useForm({
-    defaultValues: {email: "", password: ""},
-    validators: {onSubmit: loginFormSchema},
-    onSubmit: ({value}) => {
+    defaultValues: { email: "", password: "" },
+    validators: { onSubmit: loginFormSchema },
+    onSubmit: ({ value }) => {
       // mutation呼び出し
     },
   });
-  return {form};
+  return { form };
 };
 ```
 
@@ -165,7 +165,7 @@ export const useLoginForm = () => {
 ```tsx
 // components/LoginForm/index.tsx
 const LoginForm: React.FC = () => {
-  const {form} = useLoginForm(); // ロジックをhookに分離
+  const { form } = useLoginForm(); // ロジックをhookに分離
 
   return (
     <form
@@ -198,18 +198,42 @@ const LoginForm: React.FC = () => {
 - `route.tsx`: レイアウトルート
 - `index.tsx`: インデックスルート
 
+### index.tsx と index.lazy.tsx の役割分離
+
+TanStack Router の loader 系（`beforeLoad`, `loader`, `validateSearch` など）は `index.tsx` に閉じ込める。
+`index.lazy.tsx` は UI 描画のみ（コンポーネントと表示ロジック）に限定し、副作用・データ取得・リダイレクトは書かない。
+
+目的: loader をコード分割対象から外し、ルーティング時の前処理を確実に実行できるようにする。
+
+```tsx
+// routes/profile/index.tsx
+export const Route = createFileRoute("/profile")({
+  beforeLoad: async ({ context }) => {
+    await context.queryClient.ensureQueryData(useFetchSelfInfoOptions());
+  },
+  loader: async ({ context }) => {
+    return await context.queryClient.ensureQueryData(useFetchProfileOptions());
+  },
+});
+
+// routes/profile/index.lazy.tsx
+export const Route = createLazyFileRoute("/profile")({
+  component: ProfilePage,
+});
+```
+
 ### Route Guards
 
 ```tsx
 // routes/index.tsx
 export const Route = createFileRoute("/")({
-  beforeLoad: async ({context}) => {
+  beforeLoad: async ({ context }) => {
     try {
       await context.queryClient.ensureQueryData(useFetchSelfInfoOptions());
     } catch (_) {
-      throw redirect({to: "/auth/login"});
+      throw redirect({ to: "/auth/login" });
     }
-    throw redirect({to: "/timeline/scraps"});
+    throw redirect({ to: "/timeline/scraps" });
   },
 });
 ```
@@ -220,12 +244,12 @@ export const Route = createFileRoute("/")({
 
 ```typescript
 // ✅ Good: @/ エイリアス使用
-import {cn} from "@/utils/cn";
+import { cn } from "@/utils/cn";
 import Button from "@/components/ui/Button";
-import {useLoginForm} from "@/features/auth/login/hooks/useLoginForm";
+import { useLoginForm } from "@/features/auth/login/hooks/useLoginForm";
 
 // ❌ Avoid: 深い相対パス
-import {cn} from "../../../utils/cn";
+import { cn } from "../../../utils/cn";
 ```
 
 ### Import Order（推奨）
@@ -260,8 +284,8 @@ import {cn} from "../../../utils/cn";
 ```typescript
 // utils/cn.ts
 import clsx from "clsx";
-import {twMerge} from "tailwind-merge";
-import type {ClassValue} from "clsx";
+import { twMerge } from "tailwind-merge";
+import type { ClassValue } from "clsx";
 
 export const cn = (...classes: Array<ClassValue>) => twMerge(clsx(...classes));
 ```
@@ -405,7 +429,7 @@ className = "bg-white text-black border border-black";
 
 ```tsx
 // ✅ Good: 基本スタイルを定義し、classNameで拡張可能に
-const Card: React.FC<Props> = ({children, className}) => {
+const Card: React.FC<Props> = ({ children, className }) => {
   return (
     <div className={cn("rounded-xl shadow-lg p-4", className)}>{children}</div>
   );
@@ -463,4 +487,4 @@ className={cn('rounded-full', sizeClasses[size])}
 ---
 
 _created_at: 2026-01-26_
-_updated_at: 2026-01-26_
+_updated_at: 2026-01-27_
