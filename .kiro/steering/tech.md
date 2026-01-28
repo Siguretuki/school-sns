@@ -2,81 +2,92 @@
 
 ## Architecture
 
-- **モノレポ構成**: pnpm workspace で `app/backend` と `app/frontend` を分離し、ルートのスクリプトで統合操作
-- **API + SPA**: Backend は Hono の API、Frontend は React + TanStack Router の SPA
-- **スキーマ駆動**: DB は Prisma、入力/環境変数は Zod を中心に検証する
+モノレポ構成でBackend（API）とFrontend（SPA）を分離。型安全なクライアント共有により、エンドツーエンドの型整合性を実現。
 
 ## Core Technologies
 
-- **Language**: TypeScript（strict）
-- **Backend**: Node.js（ESM） + Hono
-- **Frontend**: React 19 + Vite
-- **Database/ORM**: Prisma（SQLite）
+- **Language**: TypeScript (strict mode)
+- **Package Manager**: pnpm 10.25.0 (workspace)
+- **Runtime**: Node.js 20+
+
+### Backend
+
+- **Framework**: Hono（軽量Web framework）
+- **ORM**: Prisma（SQLite）
+- **認証**: JWT + argon2、OAuth2（Google）
+- **エラーハンドリング**: @praha/byethrow（Result型）
+- **AI統合**: LangChain + Google Generative AI
+
+### Frontend
+
+- **Framework**: React 19
+- **Routing**: TanStack Router（型安全ルーティング）
+- **State/Data**: TanStack Query（サーバー状態管理）
+- **Styling**: Tailwind CSS v4
+- **Build**: Vite
 
 ## Key Libraries
 
-- **Backend**
-  - `hono`, `@hono/node-server`: API サーバ
-  - `hono-openapi`, `@hono/swagger-ui`: OpenAPI 生成と Swagger UI
-  - `zod`: 入力/環境変数のバリデーション
-  - `argon2`: パスワードハッシュ
-- **Frontend**
-  - `@tanstack/react-router`: ルーティング（ファイルベース）
-  - `@tanstack/react-query`: データ取得/キャッシュ
-  - `tailwindcss` (+ `tailwind-merge`, `clsx`): UI スタイリング
+| 役割       | Backend             | Frontend            |
+| ---------- | ------------------- | ------------------- |
+| API        | Hono + hono-openapi | TanStack Query      |
+| 型共有     | hc (hono/client)    | createClient import |
+| Validation | Zod                 | Zod                 |
+| Form       | -                   | TanStack Form       |
 
 ## Development Standards
 
 ### Type Safety
 
-- TypeScript `strict: true` を前提にする
-- 不要な `any` の導入を避け、境界（API/Env/DB）で型を確定させる
+- TypeScript strict mode 有効
+- `any` 禁止、明示的な型定義推奨
+- Prismaの生成型を活用
 
 ### Code Quality
 
-- ESLint + Prettier を標準の品質ゲートとして運用
-- ルートの `lint-staged` で `pnpm check` を走らせ、フォーマット/自動修正を徹底
+- ESLint + Prettier 統一設定
+- lint-staged + husky でコミット時チェック
 
 ### Testing
 
-- Vitest を採用（backend/frontend ともに `vitest run`）
-- まずはルート/サービス単位でのテスト容易性を優先する
+- Vitest（Backend/Frontend共通）
+- Backend: リポジトリ層のユニットテスト
 
 ## Development Environment
 
 ### Required Tools
 
-- Node.js（推奨: 20 以上）
-- pnpm（想定: `10.25.0`）
+- Node.js 20+
+- pnpm 10.25.0（Corepackで管理推奨）
+- Docker（devcontainer利用時）
 
 ### Common Commands
 
 ```bash
-# 依存インストール
-pnpm install
-
-# 開発起動（backend + frontend）
+# Dev（両方同時起動）
 pnpm dev
 
-# ビルド（backend + frontend）
+# Build
 pnpm build
 
 # Lint/Format
-pnpm lint
-pnpm format
-pnpm check
+pnpm lint && pnpm format
+pnpm check  # 両方実行
+
+# Backend固有
+pnpm --filter ./app/backend prisma:mig  # マイグレーション
+pnpm --filter ./app/backend prisma:gen  # クライアント生成
+pnpm --filter ./app/backend prisma:std  # Prisma Studio
 ```
 
 ## Key Technical Decisions
 
-- **Backend API の基盤に Hono**を採用し、ルーティングをドメイン単位に分割する
-- **OpenAPI/Swagger UI を dev server に統合**し、API の確認コストを下げる
-- **JWT を Cookie で運用**し、middleware で認証必須ルートを統一的に保護する
-- **Prisma + SQLite**で軽量に開発を進め、マイグレーションを履歴として残す
-- **Frontend は TanStack Router（ファイルベース）**で画面追加をルートファイル追加に寄せる
+- **Honoの採用**: 軽量・高速・型安全なAPIフレームワーク
+- **hc型共有**: BackendのAPI型をFrontendで直接利用
+- **Result型パターン**: 明示的なエラーハンドリング（byethrow）
+- **TanStack系統一**: Router/Query/Formの一貫した開発体験
+- **SQLite**: シンプルなセットアップ、Prisma経由で抽象化
 
 ---
 
-updated_at: 2026-01-22
-
-_依存を列挙するのではなく、開発パターンを決める技術だけを記録する_
+_created_at: 2026-01-26_

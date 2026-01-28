@@ -2,91 +2,87 @@
 
 ## Organization Philosophy
 
-- **Monorepo（pnpm workspace）**で backend/frontend を明確に分離する
-- Backend は **layered（routes → services → lib/db）** の流れで責務を分ける
-- Frontend は **routes（画面）** と **features（ドメインUI）** と **components（汎用UI）** を分ける
+**モノレポ + ドメイン分割**: Backend/Frontendを独立パッケージとして管理し、各パッケージ内はドメイン（機能）単位でディレクトリを構成。
 
 ## Directory Patterns
 
-### Backend: API ルーティング
+### Root Level
 
-**Location**: `/app/backend/src/routes/`
-**Purpose**: Hono のルート定義（ドメイン単位に分割）
-**Example**: `index.ts` で `.basePath('/api/v2')` を定義し、`/auth`, `/users`, `/tags` などを `.route()` で合成
+```
+/
+├── app/
+│   ├── backend/     # APIサーバー
+│   └── frontend/    # SPAクライアント
+├── docs/            # ドキュメント
+└── .kiro/           # プロジェクトメモリ（steering, specs）
+```
 
-### Backend: サービス層
+### Backend (`app/backend/`)
 
-**Location**: `/app/backend/src/services/`
-**Purpose**: ビジネスロジック（DB 操作やドメイン処理）を集約し、route ハンドラを薄く保つ
-**Example**: `services/tags/*` のように routes と同じドメイン粒度で配置
+**Purpose**: Hono APIサーバー、Prisma DB
 
-### Backend: 共通ユーティリティ
+| Path                     | Purpose                               |
+| ------------------------ | ------------------------------------- |
+| `src/routes/{domain}/`   | APIエンドポイント定義（Honoルーター） |
+| `src/services/{domain}/` | ビジネスロジック層                    |
+| `src/lib/`               | 共通ユーティリティ（JWT, Redis等）    |
+| `src/middleware/`        | 認証等のミドルウェア                  |
+| `prisma/`                | スキーマ、マイグレーション            |
+| `generated/prisma/`      | Prisma生成コード（自動生成）          |
 
-**Location**: `/app/backend/src/lib/`
-**Purpose**: 横断関心（env/jwt/cookie/prisma など）を集める
-**Example**: `env.ts` は Zod で環境変数を検証して `env` を export
+**Service Layer Pattern**:
 
-### Backend: middleware
+```typescript
+// services/{domain}/service.ts - ビジネスロジック
+// services/{domain}/repository.ts - データアクセス
+// services/{domain}/error.ts - ドメイン固有エラー
+```
 
-**Location**: `/app/backend/src/middleware/`
-**Purpose**: 認証などの横断処理を Hono middleware として提供
-**Example**: `checkAuth.ts` が Cookie の JWT を検証し、`c.set('userId', ...)` で downstream に渡す
+### Frontend (`app/frontend/`)
 
-### Backend: Prisma
+**Purpose**: React SPA、TanStack Router
 
-**Location**: `/app/backend/prisma/`
-**Purpose**: Prisma schema と migration を管理
-**Example**: `schema.prisma`（SQLite） + `migrations/` に履歴を蓄積
-
-### Frontend: ルーティング
-
-**Location**: `/app/frontend/src/routes/`
-**Purpose**: TanStack Router のファイルベースルート
-**Example**: `__root.tsx` に共通レイアウト（`<AppShell>`）を定義し、各画面を追加していく
-
-### Frontend: 機能（ドメイン）
-
-**Location**: `/app/frontend/src/features/`
-**Purpose**: 画面横断で再利用するドメインUI/ロジックの単位
-**Example**: `features/profile`, `features/artifacts` のようにドメイン別にまとめる
-
-### Frontend: UI コンポーネント
-
-**Location**: `/app/frontend/src/components/` と `/app/frontend/src/components/ui/`
-**Purpose**: 汎用コンポーネント（デザイン/レイアウトの再利用）
-**Example**: `BottomNav`, `ScreenHeader`, `PhoneFrame` など
+| Path                       | Purpose                                       |
+| -------------------------- | --------------------------------------------- |
+| `src/routes/`              | ファイルベースルーティング（TanStack Router） |
+| `src/features/{domain}/`   | ドメイン固有のコンポーネント・ロジック        |
+| `src/components/ui/`       | 再利用可能なUIプリミティブ                    |
+| `src/components/layout/`   | レイアウトコンポーネント（Header, Footer）    |
+| `src/api/routes/{domain}/` | API呼び出しhooks（TanStack Query）            |
+| `src/api/shared/`          | APIクライアント、共通エラー型                 |
+| `src/integrations/`        | 外部ライブラリ統合                            |
 
 ## Naming Conventions
 
-- **Backend**
-  - ルート: ドメイン名ディレクトリ（例: `routes/tags/`）
-  - ESM import: `./foo/index.js` のように拡張子を含む運用を前提（tsc の出力に合わせる）
-- **Frontend**
-  - ルート: `src/routes` のファイル名=パス（TanStack Router 生成に合わせる）
-  - React コンポーネント: PascalCase
+- **Files**: kebab-case（例: `auth-cookie.ts`）
+- **Components**: PascalCase（例: `Header.tsx`）
+- **Functions/Variables**: camelCase
+- **Types/Interfaces**: PascalCase（例: `ApiError`）
+- **Constants**: UPPER_SNAKE_CASE
 
 ## Import Organization
 
-- Frontend はパスエイリアスを使用
+```typescript
+// Backend - 相対パス + .js拡張子（ESM）
+import {jwt} from "../../lib/jwt.js";
+import type {SignupInput} from "../../routes/auth/schema.js";
 
-```ts
-import { cn } from "@/utils/cn";
-import Button from "@/components/ui/Button";
-import { something } from "./local";
+// Frontend - @/エイリアス
+import {apiClient} from "@/api/shared/apiClient";
+import Header from "@/components/layout/Header/index";
 ```
 
 **Path Aliases**:
 
-- `@/*` → `app/frontend/src/*`
+- Frontend: `@/` → `src/`
 
 ## Code Organization Principles
 
-- routes は「HTTP の形」に寄せ、**ドメイン処理は services に寄せる**
-- env / auth / db は **lib と middleware** に集約して重複を減らす
-- Frontend は **routes = 画面、features = 再利用単位**という前提で分割を進める
+- **ドメイン単位の凝集**: 関連コードは同一ドメインフォルダに配置
+- **Routes ↔ Services分離**: ルーティング層とビジネスロジック層の明確な境界
+- **型の共有**: BackendのAppTypeをFrontendでimportしてAPIクライアントを型安全に
+- **自動生成コードの分離**: `generated/`や`routeTree.gen.ts`はgit管理下だがバージョン管理のみ
 
 ---
 
-updated_at: 2026-01-22
-
-_ファイルツリーの列挙ではなく、配置パターンを記録する_
+_created_at: 2026-01-26_
