@@ -61,7 +61,7 @@ describe('SettingsPage', () => {
     renderPage()
 
     const editButtons = await screen.findAllByRole('button', {
-      name: '自己紹介を編集',
+      name: /プロフィールを編集/,
     })
     fireEvent.click(editButtons[0])
     expect(screen.getByText('保存')).toBeTruthy()

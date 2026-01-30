@@ -1,7 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { useLogoutMutation } from './index'
 import { usersKeys } from '@/api/routes/users/key'
-import { ApiError } from '@/api/shared/error'
 
 const invalidateQueries = vi.fn()
 let capturedOptions: any
@@ -54,7 +53,7 @@ describe('useLogoutMutation', () => {
     })
   })
 
-  it('throws ApiError on failure', async () => {
+  it('returns response on failure', async () => {
     logoutMock.mockResolvedValueOnce({
       ok: false,
       status: 500,
@@ -63,6 +62,9 @@ describe('useLogoutMutation', () => {
 
     useLogoutMutation()
 
-    await expect(capturedOptions.mutationFn()).rejects.toBeInstanceOf(ApiError)
+    await expect(capturedOptions.mutationFn()).resolves.toMatchObject({
+      ok: false,
+      status: 500,
+    })
   })
 })

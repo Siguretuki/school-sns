@@ -29,7 +29,7 @@ describe('ProfileSection', () => {
     render(<ProfileSection user={baseUser} />)
 
     fireEvent.click(
-      screen.getAllByRole('button', { name: '自己紹介を編集' })[0],
+      screen.getAllByRole('button', { name: /プロフィールを編集/ })[0],
     )
 
     expect(screen.getByText('編集フォーム')).toBeTruthy()
