@@ -8,6 +8,7 @@ export const cleanupDatabase = async () => {
   // トランザクションで一気に実行することで、
   // 万が一途中で失敗しても不整合を防げます
   await prisma.$transaction([
+    prisma.oAuthConnection.deleteMany(),
     prisma.tagScraps.deleteMany(),
     prisma.userRelationships.deleteMany(),
     prisma.artifacts.deleteMany(),
