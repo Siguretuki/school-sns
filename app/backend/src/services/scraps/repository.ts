@@ -1,4 +1,4 @@
-import type { Scraps } from '../../../generated/prisma/sqlserver/client.js'
+import type { Scraps } from '../../../generated/prisma/sqlserver/index.js'
 import { prisma } from '../../lib/prisma.js'
 import type { ScrapOptions } from './type.js'
 

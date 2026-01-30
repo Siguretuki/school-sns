@@ -1,4 +1,4 @@
-import { PrismaClient } from './../../generated/prisma/sqlserver/client.js'
+import { PrismaClient } from './../../generated/prisma/sqlserver/index.js'
 
 const prisma_base = new PrismaClient({})
 

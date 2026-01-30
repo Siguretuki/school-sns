@@ -1,4 +1,4 @@
-import type { Tags } from '../../../generated/prisma/sqlserver/client.js'
+import type { Tags } from '../../../generated/prisma/sqlserver/index.js'
 import { prisma } from '../../lib/prisma.js'
 import type { TagQueryOptions } from './type.js'
 
