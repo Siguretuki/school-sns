@@ -7,8 +7,10 @@ async function main() {
   // 1. クリーンアップ（削除の順番に注意：子から親へ）
   await prisma.userRelationships.deleteMany()
   await prisma.comments.deleteMany()
+  await prisma.tagScraps.deleteMany()
   await prisma.scraps.deleteMany()
   await prisma.assets.deleteMany()
+  await prisma.tagArtifacts.deleteMany()
   await prisma.artifacts.deleteMany()
   await prisma.tags.deleteMany()
   await prisma.users.deleteMany()
