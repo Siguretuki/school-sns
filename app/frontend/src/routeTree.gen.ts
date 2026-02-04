@@ -20,6 +20,7 @@ import { Route as TimelineArtifactsIndexRouteImport } from './routes/timeline/ar
 import { Route as SearchResultIndexRouteImport } from './routes/search/result/index'
 import { Route as AuthSignupIndexRouteImport } from './routes/auth/signup/index'
 import { Route as TimelineScrapsCreateIndexRouteImport } from './routes/timeline/scraps/create/index'
+import { Route as TimelineArtifactsCreateIndexRouteImport } from './routes/timeline/artifacts/create/index'
 import { Route as ProfileIdUserNameIndexRouteImport } from './routes/profile/$id/$userName/index'
 import { Route as TimelineScrapsEditIdIndexRouteImport } from './routes/timeline/scraps/edit/$id/index'
 import { Route as TimelineScrapsDetailIdIndexRouteImport } from './routes/timeline/scraps/detail/$id/index'
@@ -28,9 +29,6 @@ import { Route as TimelineArtifactsDetailIdIndexRouteImport } from './routes/tim
 
 const SearchIndexLazyRouteImport = createFileRoute('/search/')()
 const AuthLoginIndexLazyRouteImport = createFileRoute('/auth/login/')()
-const TimelineArtifactsCreateIndexLazyRouteImport = createFileRoute(
-  '/timeline/artifacts/create/',
-)()
 
 const TimelineRouteRoute = TimelineRouteRouteImport.update({
   id: '/timeline',
@@ -94,16 +92,6 @@ const AuthSignupIndexRoute = AuthSignupIndexRouteImport.update({
 } as any).lazy(() =>
   import('./routes/auth/signup/index.lazy').then((d) => d.Route),
 )
-const TimelineArtifactsCreateIndexLazyRoute =
-  TimelineArtifactsCreateIndexLazyRouteImport.update({
-    id: '/artifacts/create/',
-    path: '/artifacts/create/',
-    getParentRoute: () => TimelineRouteRoute,
-  } as any).lazy(() =>
-    import('./routes/timeline/artifacts/create/index.lazy').then(
-      (d) => d.Route,
-    ),
-  )
 const TimelineScrapsCreateIndexRoute =
   TimelineScrapsCreateIndexRouteImport.update({
     id: '/scraps/create/',
@@ -111,6 +99,16 @@ const TimelineScrapsCreateIndexRoute =
     getParentRoute: () => TimelineRouteRoute,
   } as any).lazy(() =>
     import('./routes/timeline/scraps/create/index.lazy').then((d) => d.Route),
+  )
+const TimelineArtifactsCreateIndexRoute =
+  TimelineArtifactsCreateIndexRouteImport.update({
+    id: '/artifacts/create/',
+    path: '/artifacts/create/',
+    getParentRoute: () => TimelineRouteRoute,
+  } as any).lazy(() =>
+    import('./routes/timeline/artifacts/create/index.lazy').then(
+      (d) => d.Route,
+    ),
   )
 const ProfileIdUserNameIndexRoute = ProfileIdUserNameIndexRouteImport.update({
   id: '/profile/$id/$userName/',
@@ -170,8 +168,8 @@ export interface FileRoutesByFullPath {
   '/timeline/scraps/': typeof TimelineScrapsIndexRoute
   '/auth/login/': typeof AuthLoginIndexLazyRoute
   '/profile/$id/$userName/': typeof ProfileIdUserNameIndexRoute
+  '/timeline/artifacts/create/': typeof TimelineArtifactsCreateIndexRoute
   '/timeline/scraps/create/': typeof TimelineScrapsCreateIndexRoute
-  '/timeline/artifacts/create/': typeof TimelineArtifactsCreateIndexLazyRoute
   '/timeline/artifacts/detail/$id/': typeof TimelineArtifactsDetailIdIndexRoute
   '/timeline/artifacts/edit/$id/': typeof TimelineArtifactsEditIdIndexRoute
   '/timeline/scraps/detail/$id/': typeof TimelineScrapsDetailIdIndexRoute
@@ -188,8 +186,8 @@ export interface FileRoutesByTo {
   '/timeline/scraps': typeof TimelineScrapsIndexRoute
   '/auth/login': typeof AuthLoginIndexLazyRoute
   '/profile/$id/$userName': typeof ProfileIdUserNameIndexRoute
+  '/timeline/artifacts/create': typeof TimelineArtifactsCreateIndexRoute
   '/timeline/scraps/create': typeof TimelineScrapsCreateIndexRoute
-  '/timeline/artifacts/create': typeof TimelineArtifactsCreateIndexLazyRoute
   '/timeline/artifacts/detail/$id': typeof TimelineArtifactsDetailIdIndexRoute
   '/timeline/artifacts/edit/$id': typeof TimelineArtifactsEditIdIndexRoute
   '/timeline/scraps/detail/$id': typeof TimelineScrapsDetailIdIndexRoute
@@ -208,8 +206,8 @@ export interface FileRoutesById {
   '/timeline/scraps/': typeof TimelineScrapsIndexRoute
   '/auth/login/': typeof AuthLoginIndexLazyRoute
   '/profile/$id/$userName/': typeof ProfileIdUserNameIndexRoute
+  '/timeline/artifacts/create/': typeof TimelineArtifactsCreateIndexRoute
   '/timeline/scraps/create/': typeof TimelineScrapsCreateIndexRoute
-  '/timeline/artifacts/create/': typeof TimelineArtifactsCreateIndexLazyRoute
   '/timeline/artifacts/detail/$id/': typeof TimelineArtifactsDetailIdIndexRoute
   '/timeline/artifacts/edit/$id/': typeof TimelineArtifactsEditIdIndexRoute
   '/timeline/scraps/detail/$id/': typeof TimelineScrapsDetailIdIndexRoute
@@ -229,8 +227,8 @@ export interface FileRouteTypes {
     | '/timeline/scraps/'
     | '/auth/login/'
     | '/profile/$id/$userName/'
-    | '/timeline/scraps/create/'
     | '/timeline/artifacts/create/'
+    | '/timeline/scraps/create/'
     | '/timeline/artifacts/detail/$id/'
     | '/timeline/artifacts/edit/$id/'
     | '/timeline/scraps/detail/$id/'
@@ -247,8 +245,8 @@ export interface FileRouteTypes {
     | '/timeline/scraps'
     | '/auth/login'
     | '/profile/$id/$userName'
-    | '/timeline/scraps/create'
     | '/timeline/artifacts/create'
+    | '/timeline/scraps/create'
     | '/timeline/artifacts/detail/$id'
     | '/timeline/artifacts/edit/$id'
     | '/timeline/scraps/detail/$id'
@@ -266,8 +264,8 @@ export interface FileRouteTypes {
     | '/timeline/scraps/'
     | '/auth/login/'
     | '/profile/$id/$userName/'
-    | '/timeline/scraps/create/'
     | '/timeline/artifacts/create/'
+    | '/timeline/scraps/create/'
     | '/timeline/artifacts/detail/$id/'
     | '/timeline/artifacts/edit/$id/'
     | '/timeline/scraps/detail/$id/'
@@ -356,18 +354,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSignupIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/timeline/artifacts/create/': {
-      id: '/timeline/artifacts/create/'
-      path: '/artifacts/create'
-      fullPath: '/timeline/artifacts/create/'
-      preLoaderRoute: typeof TimelineArtifactsCreateIndexLazyRouteImport
-      parentRoute: typeof TimelineRouteRoute
-    }
     '/timeline/scraps/create/': {
       id: '/timeline/scraps/create/'
       path: '/scraps/create'
       fullPath: '/timeline/scraps/create/'
       preLoaderRoute: typeof TimelineScrapsCreateIndexRouteImport
+      parentRoute: typeof TimelineRouteRoute
+    }
+    '/timeline/artifacts/create/': {
+      id: '/timeline/artifacts/create/'
+      path: '/artifacts/create'
+      fullPath: '/timeline/artifacts/create/'
+      preLoaderRoute: typeof TimelineArtifactsCreateIndexRouteImport
       parentRoute: typeof TimelineRouteRoute
     }
     '/profile/$id/$userName/': {
@@ -425,8 +423,8 @@ const SearchRouteRouteWithChildren = SearchRouteRoute._addFileChildren(
 interface TimelineRouteRouteChildren {
   TimelineArtifactsIndexRoute: typeof TimelineArtifactsIndexRoute
   TimelineScrapsIndexRoute: typeof TimelineScrapsIndexRoute
+  TimelineArtifactsCreateIndexRoute: typeof TimelineArtifactsCreateIndexRoute
   TimelineScrapsCreateIndexRoute: typeof TimelineScrapsCreateIndexRoute
-  TimelineArtifactsCreateIndexLazyRoute: typeof TimelineArtifactsCreateIndexLazyRoute
   TimelineArtifactsDetailIdIndexRoute: typeof TimelineArtifactsDetailIdIndexRoute
   TimelineArtifactsEditIdIndexRoute: typeof TimelineArtifactsEditIdIndexRoute
   TimelineScrapsDetailIdIndexRoute: typeof TimelineScrapsDetailIdIndexRoute
@@ -436,8 +434,8 @@ interface TimelineRouteRouteChildren {
 const TimelineRouteRouteChildren: TimelineRouteRouteChildren = {
   TimelineArtifactsIndexRoute: TimelineArtifactsIndexRoute,
   TimelineScrapsIndexRoute: TimelineScrapsIndexRoute,
+  TimelineArtifactsCreateIndexRoute: TimelineArtifactsCreateIndexRoute,
   TimelineScrapsCreateIndexRoute: TimelineScrapsCreateIndexRoute,
-  TimelineArtifactsCreateIndexLazyRoute: TimelineArtifactsCreateIndexLazyRoute,
   TimelineArtifactsDetailIdIndexRoute: TimelineArtifactsDetailIdIndexRoute,
   TimelineArtifactsEditIdIndexRoute: TimelineArtifactsEditIdIndexRoute,
   TimelineScrapsDetailIdIndexRoute: TimelineScrapsDetailIdIndexRoute,
