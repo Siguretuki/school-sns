@@ -9,7 +9,11 @@ export const usePostScrapForm = (replyToScrapId: string | null = null) => {
   return useScrapForm({
     onSubmit: (value) => {
       mutation.mutate(
-        { ...value, parentId: replyToScrapId },
+        {
+          ...value,
+          parentId: replyToScrapId,
+          tagIds: value.tags.length > 0 ? value.tags : undefined,
+        },
         {
           onSuccess: () => {
             navigate({
