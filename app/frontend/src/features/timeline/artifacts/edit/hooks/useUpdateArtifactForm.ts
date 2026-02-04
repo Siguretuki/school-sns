@@ -3,7 +3,7 @@ import type { ArtifactFormValues } from '@/features/timeline/artifacts/hooks/use
 import { useUpdateArtifactMutation } from '@/api/routes/artifacts'
 import { useArtifactForm } from '@/features/timeline/artifacts/hooks/useArtifactForm'
 
-export const useUpdateAritfactForm = (
+export const useUpdateArtifactForm = (
   targetId: string,
   initialValues: ArtifactFormValues,
 ) => {
