@@ -22,4 +22,41 @@ const searchResultSchema = z.object({
   tag: searchResultEntities,
 })
 
-export { searchQuerySchema, searchResultSchema }
+const userSearchResultSchema = z.object({
+  id: z.string(),
+  userName: z.string(),
+  avatarUrl: z.string(),
+})
+
+const tagSearchResultSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+})
+
+const scrapSearchResultSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  body: z.string(),
+  author: z.object({
+    userName: z.string(),
+    avatarUrl: z.string(),
+  }),
+})
+
+const artifactSearchResultSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  author: z.object({
+    userName: z.string(),
+    avatarUrl: z.string(),
+  }),
+})
+
+export {
+  searchQuerySchema,
+  searchResultSchema,
+  userSearchResultSchema,
+  tagSearchResultSchema,
+  scrapSearchResultSchema,
+  artifactSearchResultSchema,
+}

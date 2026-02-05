@@ -2,6 +2,10 @@ import { Result } from '@praha/byethrow'
 import { searchRepository } from './repository.js'
 import type { SearchResult, SearchType } from './type.js'
 
+const isPublished = <T extends Record<PropertyKey, unknown>>(
+  data: T & { publishedAt: Date | null },
+): data is T & { publishedAt: Date } => data.publishedAt !== null
+
 export const searchService = {
   searchByKeyword: async (keyword: string, type: SearchType = 'all') => {
     const handlers = {
@@ -46,5 +50,21 @@ export const searchService = {
       user: type === 'user' ? await handlers.user() : [],
       tag: type === 'tag' ? await handlers.tag() : [],
     })
+  },
+  searchArtifacts: async (keyword: string) => {
+    return Result.succeed(
+      (await searchRepository.findArtifactsByKeyword(keyword)).filter(
+        isPublished,
+      ),
+    )
+  },
+  searchScraps: async (keyword: string) => {
+    return Result.succeed(await searchRepository.findScrapsByKeyword(keyword))
+  },
+  searchUsers: async (keyword: string) => {
+    return Result.succeed(await searchRepository.findUsersByKeyword(keyword))
+  },
+  searchTags: async (keyword: string) => {
+    return Result.succeed(await searchRepository.findTagsByKeyword(keyword))
   },
 }

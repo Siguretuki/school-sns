@@ -7,7 +7,11 @@ import { cn } from '@/utils/cn'
 
 type TitlePath = Extract<
   NonNullable<AppPath['to']>,
-  '/auth/login' | '/auth/signup' | '/timeline/artifacts' | '/settings'
+  | '/auth/login'
+  | '/auth/signup'
+  | '/timeline/artifacts'
+  | '/settings'
+  | '/search'
 >
 
 interface PathWithTitle {
@@ -20,6 +24,7 @@ const HeaderTitles: Array<PathWithTitle> = [
   { path: '/auth/signup', title: '新規登録' },
   { path: '/timeline/artifacts', title: '記事' },
   { path: '/settings', title: '設定' },
+  { path: '/search', title: '検索' },
 ]
 
 export default function Header() {
@@ -38,6 +43,14 @@ export default function Header() {
     shouldThrow: false,
   })
   const isAuthPage = (loginMatch ?? signupMatch) !== undefined
+  
+  const searchMatch = useMatch({
+    from: '/search',
+    shouldThrow: false,
+  })
+  const isSearchPage = searchMatch !== undefined
+
+  if (isSearchPage) return null
 
   const currentTitle = HeaderTitles.find((item) =>
     matches.some(

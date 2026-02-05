@@ -3,11 +3,10 @@ import { prisma } from '../../lib/prisma.js'
 export const searchRepository = {
   findArtifactsByKeyword: async (keyword: string) => {
     return await prisma.artifacts.findMany({
-      select: {
-        id: true,
-        title: true,
-      },
       where: {
+        publishedAt: {
+          not: null,
+        },
         OR: [
           {
             title: {
@@ -21,6 +20,14 @@ export const searchRepository = {
           },
         ],
       },
+      include: {
+        user: {
+          select: {
+            userName: true,
+            avatarUrl: true,
+          },
+        },
+      },
     })
   },
   findUsersByKeyword: async (keyword: string) => {
@@ -28,6 +35,7 @@ export const searchRepository = {
       select: {
         id: true,
         userName: true,
+        avatarUrl: true,
       },
       where: {
         userName: {
@@ -38,10 +46,6 @@ export const searchRepository = {
   },
   findScrapsByKeyword: async (keyword: string) => {
     return await prisma.scraps.findMany({
-      select: {
-        id: true,
-        title: true,
-      },
       where: {
         OR: [
           {
@@ -55,6 +59,14 @@ export const searchRepository = {
             },
           },
         ],
+      },
+      include: {
+        user: {
+          select: {
+            userName: true,
+            avatarUrl: true,
+          },
+        },
       },
     })
   },

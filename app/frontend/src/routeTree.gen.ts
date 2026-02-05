@@ -12,6 +12,7 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TimelineRouteRouteImport } from './routes/timeline/route'
+import { Route as SearchRouteRouteImport } from './routes/search/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 import { Route as TimelineScrapsIndexRouteImport } from './routes/timeline/scraps/index'
@@ -38,15 +39,20 @@ const TimelineRouteRoute = TimelineRouteRouteImport.update({
   path: '/timeline',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SearchRouteRoute = SearchRouteRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SearchIndexLazyRoute = SearchIndexLazyRouteImport.update({
-  id: '/search/',
-  path: '/search/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => SearchRouteRoute,
 } as any).lazy(() => import('./routes/search/index.lazy').then((d) => d.Route))
 const SettingsIndexRoute = SettingsIndexRouteImport.update({
   id: '/settings/',
@@ -77,9 +83,9 @@ const TimelineArtifactsIndexRoute = TimelineArtifactsIndexRouteImport.update({
   import('./routes/timeline/artifacts/index.lazy').then((d) => d.Route),
 )
 const SearchResultIndexRoute = SearchResultIndexRouteImport.update({
-  id: '/search/result/',
-  path: '/search/result/',
-  getParentRoute: () => rootRouteImport,
+  id: '/result/',
+  path: '/result/',
+  getParentRoute: () => SearchRouteRoute,
 } as any).lazy(() =>
   import('./routes/search/result/index.lazy').then((d) => d.Route),
 )
@@ -156,6 +162,7 @@ const TimelineArtifactsDetailIdIndexRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/search': typeof SearchRouteRouteWithChildren
   '/timeline': typeof TimelineRouteRouteWithChildren
   '/settings/': typeof SettingsIndexRoute
   '/search/': typeof SearchIndexLazyRoute
@@ -193,6 +200,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/search': typeof SearchRouteRouteWithChildren
   '/timeline': typeof TimelineRouteRouteWithChildren
   '/settings/': typeof SettingsIndexRoute
   '/search/': typeof SearchIndexLazyRoute
@@ -213,6 +221,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/search'
     | '/timeline'
     | '/settings/'
     | '/search/'
@@ -249,6 +258,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/search'
     | '/timeline'
     | '/settings/'
     | '/search/'
@@ -268,11 +278,10 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SearchRouteRoute: typeof SearchRouteRouteWithChildren
   TimelineRouteRoute: typeof TimelineRouteRouteWithChildren
   SettingsIndexRoute: typeof SettingsIndexRoute
-  SearchIndexLazyRoute: typeof SearchIndexLazyRoute
   AuthSignupIndexRoute: typeof AuthSignupIndexRoute
-  SearchResultIndexRoute: typeof SearchResultIndexRoute
   AuthLoginIndexLazyRoute: typeof AuthLoginIndexLazyRoute
   ProfileIdUserNameIndexRoute: typeof ProfileIdUserNameIndexRoute
 }
@@ -286,6 +295,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TimelineRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -295,10 +311,10 @@ declare module '@tanstack/react-router' {
     }
     '/search/': {
       id: '/search/'
-      path: '/search'
+      path: '/'
       fullPath: '/search/'
       preLoaderRoute: typeof SearchIndexLazyRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof SearchRouteRoute
     }
     '/settings/': {
       id: '/settings/'
@@ -330,10 +346,10 @@ declare module '@tanstack/react-router' {
     }
     '/search/result/': {
       id: '/search/result/'
-      path: '/search/result'
+      path: '/result'
       fullPath: '/search/result/'
       preLoaderRoute: typeof SearchResultIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof SearchRouteRoute
     }
     '/auth/signup/': {
       id: '/auth/signup/'
@@ -394,6 +410,20 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface SearchRouteRouteChildren {
+  SearchIndexLazyRoute: typeof SearchIndexLazyRoute
+  SearchResultIndexRoute: typeof SearchResultIndexRoute
+}
+
+const SearchRouteRouteChildren: SearchRouteRouteChildren = {
+  SearchIndexLazyRoute: SearchIndexLazyRoute,
+  SearchResultIndexRoute: SearchResultIndexRoute,
+}
+
+const SearchRouteRouteWithChildren = SearchRouteRoute._addFileChildren(
+  SearchRouteRouteChildren,
+)
+
 interface TimelineRouteRouteChildren {
   TimelineArtifactsIndexRoute: typeof TimelineArtifactsIndexRoute
   TimelineScrapsIndexRoute: typeof TimelineScrapsIndexRoute
@@ -422,11 +452,10 @@ const TimelineRouteRouteWithChildren = TimelineRouteRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SearchRouteRoute: SearchRouteRouteWithChildren,
   TimelineRouteRoute: TimelineRouteRouteWithChildren,
   SettingsIndexRoute: SettingsIndexRoute,
-  SearchIndexLazyRoute: SearchIndexLazyRoute,
   AuthSignupIndexRoute: AuthSignupIndexRoute,
-  SearchResultIndexRoute: SearchResultIndexRoute,
   AuthLoginIndexLazyRoute: AuthLoginIndexLazyRoute,
   ProfileIdUserNameIndexRoute: ProfileIdUserNameIndexRoute,
 }

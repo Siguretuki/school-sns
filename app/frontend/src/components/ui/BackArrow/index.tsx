@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router'
+import { useNavigate, useRouter } from '@tanstack/react-router'
 import { ArrowLeft } from 'lucide-react'
 import type { AppPath } from '@/types'
 import type React from 'react'
@@ -7,11 +7,22 @@ interface Props {
   link?: AppPath
 }
 
-const BackArrow: React.FC<Props> = ({ link = { to: '..' } }) => {
+const BackArrow: React.FC<Props> = ({ link }) => {
+  const router = useRouter()
+  const navigate = useNavigate()
+
+  const handleClick = () => {
+    if (link === undefined) {
+      router.history.back()
+    } else {
+      navigate(link)
+    }
+  }
+
   return (
-    <Link {...link}>
+    <button onClick={handleClick}>
       <ArrowLeft className="h-5 w-5" />
-    </Link>
+    </button>
   )
 }
 
