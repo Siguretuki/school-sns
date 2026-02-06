@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker'
-import { PrismaClient } from '../../generated/prisma/sqlserver/index.js'
+import { PrismaClient } from '../../generated/prisma/index.js'
 
 const prisma = new PrismaClient()
 
@@ -59,6 +59,7 @@ async function main() {
         title: faker.commerce.productName(),
         body: faker.lorem.paragraphs(),
         userId: user.id,
+        publishedAt: new Date(),
         tagArtifacts: {
           create: selectedTags.map((tag) => ({
             tag: {

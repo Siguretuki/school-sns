@@ -1,5 +1,5 @@
 import { Result } from '@praha/byethrow'
-import type { Artifacts } from '../../../generated/prisma/sqlserver/index.js'
+import type { Artifacts } from '../../../generated/prisma/index.js'
 import { InvalidArtifactStatusError } from '../../errors.js'
 import { summarizePost } from '../../lib/langchain/index.js'
 import { isPublished, isStatusString } from '../../lib/typeCheckFilter.js'

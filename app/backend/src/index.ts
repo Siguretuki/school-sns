@@ -30,6 +30,8 @@ export const app = new Hono()
 
 export type AppType = typeof app
 
+export default app
+
 if (process.env.NODE_ENV !== 'test') {
   serve(
     {

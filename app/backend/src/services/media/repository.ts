@@ -1,4 +1,4 @@
-import type { Assets } from '../../../generated/prisma/sqlserver/index.js'
+import type { Assets } from '../../../generated/prisma/index.js'
 import { prisma } from '../../lib/prisma.js'
 import type { MediaQueryOptions } from './type.js'
 

@@ -1,5 +1,5 @@
 import { Result } from '@praha/byethrow'
-import type { Scraps } from '../../../generated/prisma/sqlserver/index.js'
+import type { Scraps } from '../../../generated/prisma/index.js'
 import { TagNotFoundError } from '../tags/error.js'
 import { tagsRepository } from '../tags/repository.js'
 import { NotScrapOwnerError, ScrapNotFoundError } from './error.js'

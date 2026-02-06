@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { describeRoute, resolver, validator } from 'hono-openapi'
-import type { Assets } from '../../../generated/prisma/sqlserver/index.js'
+import type { Assets } from '../../../generated/prisma/index.js'
 import { authCheck } from '../../middleware/authCheck.js'
 import { mediaService } from '../../services/media/index.js'
 import { getMediaQuerySchema, mediaResponseSchema } from './schema.js'
