@@ -1,11 +1,11 @@
 import { Link, createLazyFileRoute } from '@tanstack/react-router'
 import type { SearchType } from '@/features/search/types'
 import type React from 'react'
-import TabItem from '@/features/search/result/components/TabItem'
 import ArtifactPreview from '@/components/ui/ArtifactPreview'
 import ScrapPreview from '@/components/ui/ScrapPreview'
 import UserPreview from '@/components/ui/UserPreview'
 import TagPreview from '@/components/ui/TagPreview'
+import Tab from '@/components/layout/Tab'
 
 export const Route = createLazyFileRoute('/search/result/')({
   component: RouteComponent,
@@ -76,15 +76,18 @@ function RouteComponent() {
 
   return (
     <div className="flex flex-col gap-4 w-full">
-      <div className="flex overflow-y-auto border-b border-slate-500 p-0 bg-slate-50 scrollbar-hidden">
+      <Tab>
         {(['scrap', 'artifact', 'user', 'tag'] satisfies Array<SearchType>).map(
           (type) => (
             <Link key={type} to="." search={(s) => ({ ...s, type })}>
-              <TabItem label={TAB_LABELS[type]} isActive={data.type === type} />
+              <Tab.Item
+                label={TAB_LABELS[type]}
+                isActive={data.type === type}
+              />
             </Link>
           ),
         )}
-      </div>
+      </Tab>
       {resultView}
     </div>
   )
