@@ -59,7 +59,21 @@ const useFetchUserContentsOptions = (
     },
   })
 
+const useFetchUserInfoOptions = (userId: string) =>
+  queryOptions({
+    queryKey: usersKeys.detail(userId),
+    queryFn: async () => {
+      const res = await apiClient.users[':userId'].$get({ param: { userId } })
+
+      if (!res.ok) {
+        return await parseApiError(res)
+      }
+      return await res.json()
+    },
+  })
+
 export {
+  useFetchUserInfoOptions,
   useFetchSelfInfoOptions,
   useUpdateProfileMutation,
   useFetchUserContentsOptions,
