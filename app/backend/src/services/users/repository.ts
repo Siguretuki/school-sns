@@ -5,6 +5,19 @@ export const usersRepository = {
   getById: async (id: string) => {
     return await prisma.users.findUnique({
       where: { id },
+      select: {
+        id: true,
+        userName: true,
+        bio: true,
+        avatarUrl: true,
+        _count: {
+          select: {
+            userFolloweeRelationships: true,
+            userFollowerRelationships: true,
+            artifacts: true,
+          },
+        },
+      },
     })
   },
   updateById: async (id: string, data: EditUserInfo) => {
@@ -66,10 +79,42 @@ export const usersRepository = {
     })
     return followees.map((relation) => relation.followee)
   },
-  getContentsByUserId: async (userId: string) => {
-    const contents = await prisma.artifacts.findMany({
-      where: { userId },
+  getContentsByUserId: async (
+    userId: string,
+    options?: {
+      type?: 'scraps' | 'artifacts'
+      onlyPublished?: boolean
+    },
+  ) => {
+    return await prisma.users.findFirst({
+      where: { id: userId },
+      select: {
+        scraps:
+          options?.type === undefined || options.type === 'scraps'
+            ? {
+                select: {
+                  id: true,
+                  title: true,
+                  createdAt: true,
+                },
+              }
+            : undefined,
+        artifacts:
+          options?.type === undefined || options.type === 'artifacts'
+            ? {
+                where: options?.onlyPublished
+                  ? {
+                      publishedAt: { not: null },
+                    }
+                  : undefined,
+                select: {
+                  id: true,
+                  title: true,
+                  publishedAt: true,
+                },
+              }
+            : undefined,
+      },
     })
-    return contents
   },
 }

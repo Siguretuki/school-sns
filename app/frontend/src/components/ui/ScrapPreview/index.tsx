@@ -28,7 +28,7 @@ const ScrapPreview: React.FC<Props> = ({ owner, scrap, className }) => {
         to="/timeline/scraps/detail/$id"
         params={{ id: scrap.id }}
         className={cn(
-          'flex flex-col bg-slate-100/80 border border-slate-400/60 ',
+          'flex flex-col bg-slate-100/80 border border-slate-400/60 px-2 py-3 rounded-lg',
           className,
         )}
       >
