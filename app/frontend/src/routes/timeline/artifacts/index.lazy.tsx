@@ -3,7 +3,7 @@ import { Link, createLazyFileRoute } from '@tanstack/react-router'
 import { useFetchArtifactsOptions } from '@/api/routes/artifacts'
 import Popover from '@/components/layout/Popover'
 import NewPostButton from '@/features/timeline/components/NewPostButton'
-import ArtifactPreview from '@/features/timeline/artifacts/components/ArtifactPreview'
+import ArtifactPreview from '@/components/ui/ArtifactPreview'
 
 export const Route = createLazyFileRoute('/timeline/artifacts/')({
   component: RouteComponent,

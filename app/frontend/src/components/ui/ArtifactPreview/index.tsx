@@ -10,7 +10,7 @@ interface Props {
     id: string
     title: string
     summaryByAI: string | null
-    publishedAt: string
+    publishedAt: string | null
   }
 }
 
@@ -30,7 +30,9 @@ const ArtifactPreview: React.FC<Props> = ({ owner, artifact }) => {
       <div className="flex items-center gap-1 text-slate-500">
         <Clock className="w-4 h-4" />
         <span className="text-sm">
-          {new Date(artifact.publishedAt).toLocaleDateString()}
+          {artifact.publishedAt
+            ? new Date(artifact.publishedAt).toLocaleDateString()
+            : '未公開'}
         </span>
       </div>
     </Link>

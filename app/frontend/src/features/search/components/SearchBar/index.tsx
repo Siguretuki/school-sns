@@ -1,6 +1,4 @@
-import { FileText, LayoutGrid } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import FilterTag from '@/components/ui/FilterTag'
+import { useEffect } from 'react'
 import SearchInput from '@/components/ui/SearchInput'
 import { useSearchForm } from '@/features/search/hooks/useSearchForm'
 
@@ -9,20 +7,11 @@ interface Props {
   keyword: string | null
 }
 
-const TABS = [
-  { label: 'すべて' },
-  { label: 'ユーザー' },
-  { label: 'タグ' },
-  { label: 'Artifacts', icon: <LayoutGrid className="w-4 h-4" /> },
-  { label: 'Scraps', icon: <FileText className="w-4 h-4" /> },
-]
-
 const SearchBar: React.FC<Props> = ({
   placeholder = '投稿、タグ、ユーザーを検索',
   keyword,
 }) => {
   const { form } = useSearchForm({ keyword })
-  const [selectedTab, setSelectedTab] = useState('すべて')
 
   useEffect(() => {
     form.setFieldValue('keyword', keyword)
@@ -50,19 +39,6 @@ const SearchBar: React.FC<Props> = ({
           )}
         </form.Field>
       </form>
-
-      <div className="flex gap-2 overflow-x-auto scrollbar-hidden">
-        {TABS.map((tab) => (
-          <FilterTag
-            key={tab.label}
-            label={tab.label}
-            icon={tab.icon}
-            isSelected={selectedTab === tab.label}
-            onClick={() => setSelectedTab(tab.label)}
-            className="whitespace-nowrap"
-          />
-        ))}
-      </div>
     </div>
   )
 }

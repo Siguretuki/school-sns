@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { Link, createLazyFileRoute } from '@tanstack/react-router'
 import { useFetchScrapDetailOptions } from '@/api/routes/scraps'
-import ScrapPreview from '@/features/timeline/scraps/components/ScrapPreview'
+import ScrapPreview from '@/components/ui/ScrapPreview'
 import Actions from '@/features/timeline/scraps/detail/components/Actions'
 import ScrapDetail from '@/features/timeline/scraps/detail/components/ScrapDetail'
 import Popover from '@/components/layout/Popover'

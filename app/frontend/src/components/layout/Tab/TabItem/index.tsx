@@ -3,9 +3,10 @@ import { cn } from '@/utils/cn'
 interface Props {
   label: string
   isActive: boolean
+  className?: string
 }
 
-const TabItem: React.FC<Props> = ({ label, isActive }) => {
+const TabItem: React.FC<Props> = ({ label, isActive, className }) => {
   return (
     <div
       className={cn(
@@ -13,6 +14,7 @@ const TabItem: React.FC<Props> = ({ label, isActive }) => {
         isActive
           ? 'border-b-blue-500 font-semibold text-black'
           : 'text-slate-600 hover:text-slate-800 hover:border-slate-300 bg-slate-300/10',
+        className,
       )}
     >
       {label}

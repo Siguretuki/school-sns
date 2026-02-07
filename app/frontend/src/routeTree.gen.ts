@@ -15,6 +15,7 @@ import { Route as TimelineRouteRouteImport } from './routes/timeline/route'
 import { Route as SearchRouteRouteImport } from './routes/search/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
+import { Route as ProfileIndexRouteImport } from './routes/profile/index'
 import { Route as TimelineScrapsIndexRouteImport } from './routes/timeline/scraps/index'
 import { Route as TimelineArtifactsIndexRouteImport } from './routes/timeline/artifacts/index'
 import { Route as SearchResultIndexRouteImport } from './routes/search/result/index'
@@ -26,6 +27,8 @@ import { Route as TimelineScrapsEditIdIndexRouteImport } from './routes/timeline
 import { Route as TimelineScrapsDetailIdIndexRouteImport } from './routes/timeline/scraps/detail/$id/index'
 import { Route as TimelineArtifactsEditIdIndexRouteImport } from './routes/timeline/artifacts/edit/$id/index'
 import { Route as TimelineArtifactsDetailIdIndexRouteImport } from './routes/timeline/artifacts/detail/$id/index'
+import { Route as ProfileIdUserNameFollowingIndexRouteImport } from './routes/profile/$id/$userName/following/index'
+import { Route as ProfileIdUserNameFollowersIndexRouteImport } from './routes/profile/$id/$userName/followers/index'
 
 const SearchIndexLazyRouteImport = createFileRoute('/search/')()
 const AuthLoginIndexLazyRouteImport = createFileRoute('/auth/login/')()
@@ -57,6 +60,11 @@ const SettingsIndexRoute = SettingsIndexRouteImport.update({
 } as any).lazy(() =>
   import('./routes/settings/index.lazy').then((d) => d.Route),
 )
+const ProfileIndexRoute = ProfileIndexRouteImport.update({
+  id: '/profile/',
+  path: '/profile/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthLoginIndexLazyRoute = AuthLoginIndexLazyRouteImport.update({
   id: '/auth/login/',
   path: '/auth/login/',
@@ -155,11 +163,32 @@ const TimelineArtifactsDetailIdIndexRoute =
       (d) => d.Route,
     ),
   )
+const ProfileIdUserNameFollowingIndexRoute =
+  ProfileIdUserNameFollowingIndexRouteImport.update({
+    id: '/profile/$id/$userName/following/',
+    path: '/profile/$id/$userName/following/',
+    getParentRoute: () => rootRouteImport,
+  } as any).lazy(() =>
+    import('./routes/profile/$id/$userName/following/index.lazy').then(
+      (d) => d.Route,
+    ),
+  )
+const ProfileIdUserNameFollowersIndexRoute =
+  ProfileIdUserNameFollowersIndexRouteImport.update({
+    id: '/profile/$id/$userName/followers/',
+    path: '/profile/$id/$userName/followers/',
+    getParentRoute: () => rootRouteImport,
+  } as any).lazy(() =>
+    import('./routes/profile/$id/$userName/followers/index.lazy').then(
+      (d) => d.Route,
+    ),
+  )
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/search': typeof SearchRouteRouteWithChildren
   '/timeline': typeof TimelineRouteRouteWithChildren
+  '/profile/': typeof ProfileIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/search/': typeof SearchIndexLazyRoute
   '/auth/signup/': typeof AuthSignupIndexRoute
@@ -170,6 +199,8 @@ export interface FileRoutesByFullPath {
   '/profile/$id/$userName/': typeof ProfileIdUserNameIndexRoute
   '/timeline/artifacts/create/': typeof TimelineArtifactsCreateIndexRoute
   '/timeline/scraps/create/': typeof TimelineScrapsCreateIndexRoute
+  '/profile/$id/$userName/followers/': typeof ProfileIdUserNameFollowersIndexRoute
+  '/profile/$id/$userName/following/': typeof ProfileIdUserNameFollowingIndexRoute
   '/timeline/artifacts/detail/$id/': typeof TimelineArtifactsDetailIdIndexRoute
   '/timeline/artifacts/edit/$id/': typeof TimelineArtifactsEditIdIndexRoute
   '/timeline/scraps/detail/$id/': typeof TimelineScrapsDetailIdIndexRoute
@@ -178,6 +209,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/timeline': typeof TimelineRouteRouteWithChildren
+  '/profile': typeof ProfileIndexRoute
   '/settings': typeof SettingsIndexRoute
   '/search': typeof SearchIndexLazyRoute
   '/auth/signup': typeof AuthSignupIndexRoute
@@ -188,6 +220,8 @@ export interface FileRoutesByTo {
   '/profile/$id/$userName': typeof ProfileIdUserNameIndexRoute
   '/timeline/artifacts/create': typeof TimelineArtifactsCreateIndexRoute
   '/timeline/scraps/create': typeof TimelineScrapsCreateIndexRoute
+  '/profile/$id/$userName/followers': typeof ProfileIdUserNameFollowersIndexRoute
+  '/profile/$id/$userName/following': typeof ProfileIdUserNameFollowingIndexRoute
   '/timeline/artifacts/detail/$id': typeof TimelineArtifactsDetailIdIndexRoute
   '/timeline/artifacts/edit/$id': typeof TimelineArtifactsEditIdIndexRoute
   '/timeline/scraps/detail/$id': typeof TimelineScrapsDetailIdIndexRoute
@@ -198,6 +232,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/search': typeof SearchRouteRouteWithChildren
   '/timeline': typeof TimelineRouteRouteWithChildren
+  '/profile/': typeof ProfileIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/search/': typeof SearchIndexLazyRoute
   '/auth/signup/': typeof AuthSignupIndexRoute
@@ -208,6 +243,8 @@ export interface FileRoutesById {
   '/profile/$id/$userName/': typeof ProfileIdUserNameIndexRoute
   '/timeline/artifacts/create/': typeof TimelineArtifactsCreateIndexRoute
   '/timeline/scraps/create/': typeof TimelineScrapsCreateIndexRoute
+  '/profile/$id/$userName/followers/': typeof ProfileIdUserNameFollowersIndexRoute
+  '/profile/$id/$userName/following/': typeof ProfileIdUserNameFollowingIndexRoute
   '/timeline/artifacts/detail/$id/': typeof TimelineArtifactsDetailIdIndexRoute
   '/timeline/artifacts/edit/$id/': typeof TimelineArtifactsEditIdIndexRoute
   '/timeline/scraps/detail/$id/': typeof TimelineScrapsDetailIdIndexRoute
@@ -219,6 +256,7 @@ export interface FileRouteTypes {
     | '/'
     | '/search'
     | '/timeline'
+    | '/profile/'
     | '/settings/'
     | '/search/'
     | '/auth/signup/'
@@ -229,6 +267,8 @@ export interface FileRouteTypes {
     | '/profile/$id/$userName/'
     | '/timeline/artifacts/create/'
     | '/timeline/scraps/create/'
+    | '/profile/$id/$userName/followers/'
+    | '/profile/$id/$userName/following/'
     | '/timeline/artifacts/detail/$id/'
     | '/timeline/artifacts/edit/$id/'
     | '/timeline/scraps/detail/$id/'
@@ -237,6 +277,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/timeline'
+    | '/profile'
     | '/settings'
     | '/search'
     | '/auth/signup'
@@ -247,6 +288,8 @@ export interface FileRouteTypes {
     | '/profile/$id/$userName'
     | '/timeline/artifacts/create'
     | '/timeline/scraps/create'
+    | '/profile/$id/$userName/followers'
+    | '/profile/$id/$userName/following'
     | '/timeline/artifacts/detail/$id'
     | '/timeline/artifacts/edit/$id'
     | '/timeline/scraps/detail/$id'
@@ -256,6 +299,7 @@ export interface FileRouteTypes {
     | '/'
     | '/search'
     | '/timeline'
+    | '/profile/'
     | '/settings/'
     | '/search/'
     | '/auth/signup/'
@@ -266,6 +310,8 @@ export interface FileRouteTypes {
     | '/profile/$id/$userName/'
     | '/timeline/artifacts/create/'
     | '/timeline/scraps/create/'
+    | '/profile/$id/$userName/followers/'
+    | '/profile/$id/$userName/following/'
     | '/timeline/artifacts/detail/$id/'
     | '/timeline/artifacts/edit/$id/'
     | '/timeline/scraps/detail/$id/'
@@ -276,10 +322,13 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SearchRouteRoute: typeof SearchRouteRouteWithChildren
   TimelineRouteRoute: typeof TimelineRouteRouteWithChildren
+  ProfileIndexRoute: typeof ProfileIndexRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
   AuthSignupIndexRoute: typeof AuthSignupIndexRoute
   AuthLoginIndexLazyRoute: typeof AuthLoginIndexLazyRoute
   ProfileIdUserNameIndexRoute: typeof ProfileIdUserNameIndexRoute
+  ProfileIdUserNameFollowersIndexRoute: typeof ProfileIdUserNameFollowersIndexRoute
+  ProfileIdUserNameFollowingIndexRoute: typeof ProfileIdUserNameFollowingIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -317,6 +366,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings/'
       preLoaderRoute: typeof SettingsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile/': {
+      id: '/profile/'
+      path: '/profile'
+      fullPath: '/profile/'
+      preLoaderRoute: typeof ProfileIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/login/': {
@@ -403,6 +459,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TimelineArtifactsDetailIdIndexRouteImport
       parentRoute: typeof TimelineRouteRoute
     }
+    '/profile/$id/$userName/following/': {
+      id: '/profile/$id/$userName/following/'
+      path: '/profile/$id/$userName/following'
+      fullPath: '/profile/$id/$userName/following/'
+      preLoaderRoute: typeof ProfileIdUserNameFollowingIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile/$id/$userName/followers/': {
+      id: '/profile/$id/$userName/followers/'
+      path: '/profile/$id/$userName/followers'
+      fullPath: '/profile/$id/$userName/followers/'
+      preLoaderRoute: typeof ProfileIdUserNameFollowersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -450,10 +520,13 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SearchRouteRoute: SearchRouteRouteWithChildren,
   TimelineRouteRoute: TimelineRouteRouteWithChildren,
+  ProfileIndexRoute: ProfileIndexRoute,
   SettingsIndexRoute: SettingsIndexRoute,
   AuthSignupIndexRoute: AuthSignupIndexRoute,
   AuthLoginIndexLazyRoute: AuthLoginIndexLazyRoute,
   ProfileIdUserNameIndexRoute: ProfileIdUserNameIndexRoute,
+  ProfileIdUserNameFollowersIndexRoute: ProfileIdUserNameFollowersIndexRoute,
+  ProfileIdUserNameFollowingIndexRoute: ProfileIdUserNameFollowingIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
