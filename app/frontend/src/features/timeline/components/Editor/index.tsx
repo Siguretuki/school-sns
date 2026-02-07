@@ -6,6 +6,7 @@ import { ja } from '@blocknote/core/locales'
 import { useEffect } from 'react'
 import type React from 'react'
 import { cn } from '@/utils/cn'
+import './override.css'
 
 interface Props {
   id?: string
@@ -46,7 +47,7 @@ const Editor: React.FC<Props> = ({
       spellCheck
       slashMenu
       linkToolbar
-      className={cn('min-h-full', className)}
+      className={cn('min-h-full editor', className)}
     />
   )
 }

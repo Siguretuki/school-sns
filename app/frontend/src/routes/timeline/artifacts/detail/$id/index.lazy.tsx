@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { Link, createLazyFileRoute } from '@tanstack/react-router'
-import { Clock } from 'lucide-react'
+import { Clock, Share } from 'lucide-react'
 import { useFetchArtifactsDetailOptions } from '@/api/routes/artifacts'
 import UserPreview from '@/components/ui/UserPreview'
 import IconWithLabel from '@/components/ui/IconWithLabel'
@@ -23,7 +23,7 @@ function RouteComponent() {
   return (
     <div className="flex flex-col gap-7 items-center px-3 py-5">
       <h1 className="text-3xl font-bold">{data.title}</h1>
-      <div className="flex flex-col gap-3 items-center">
+      <div className="flex flex-col gap-5 items-center">
         <UserPreview
           id={data.user.id}
           avatarUrl={data.user.avatarUrl}
@@ -40,6 +40,15 @@ function RouteComponent() {
             </span>
           )}
         />
+        <Link
+          to="/timeline/scraps/create"
+          search={{ shareArtifactId: data.id, shareArtifactTitle: data.title }}
+        >
+          <IconWithLabel
+            icon={() => <Share size={18} />}
+            label={() => <span className="">Share to Scrap</span>}
+          />
+        </Link>
       </div>
       {data.summaryByAI !== null && <AISummary summary={data.summaryByAI} />}
       <MarkdownViewer mdSource={data.body} className="max-w-3xl w-full" />

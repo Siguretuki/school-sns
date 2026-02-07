@@ -1,0 +1,90 @@
+/* Tailwind CSS overrides for editorViewer component */
+@import 'tailwindcss';
+
+.editor > * + * {
+  @apply mt-0 mb-2;
+}
+
+.editor li + li {
+  @apply mt-1;
+}
+
+.editor li > p + p {
+  @apply mt-4;
+}
+
+.editor strong {
+  @apply font-semibold;
+}
+
+.editor a {
+  @apply text-blue-600 font-semibold;
+}
+
+.editor strong a {
+  @apply font-bold;
+}
+
+.editor h1 {
+  @apply leading-tight border-b text-xl font-semibold mb-2 mt-4 pb-1;
+}
+
+.editor h2 {
+  @apply leading-tight border-b text-lg font-semibold mb-2 mt-4 pb-1;
+}
+
+.editor h3 {
+  @apply leading-snug text-base font-semibold mb-2 mt-4;
+}
+
+.editor h4 {
+  @apply leading-none text-sm font-semibold mb-2 mt-4;
+}
+
+.editor h5 {
+  @apply leading-tight text-sm font-semibold mb-2 mt-4;
+}
+
+.editor h6 {
+  @apply leading-tight text-sm font-semibold text-gray-600 mb-2 mt-4;
+}
+
+.editor blockquote {
+  @apply text-base border-l-4 border-gray-300 pl-4 pr-4 text-gray-600;
+}
+
+.editor code {
+  @apply font-mono text-sm inline bg-gray-200 rounded px-1 py-5;
+}
+
+.editor pre {
+  @apply bg-gray-100 rounded p-4;
+}
+
+.editor pre code {
+  @apply block bg-transparent p-0 overflow-visible rounded-none;
+}
+
+.editor ul {
+  @apply text-base pl-5 list-disc;
+}
+
+.editor ol {
+  @apply text-base pl-5 list-decimal;
+}
+
+.editor kbd {
+  @apply text-xs inline-block rounded border px-1 py-5 align-middle font-normal font-mono shadow;
+}
+
+.editor table {
+  @apply text-base border-gray-600;
+}
+
+.editor th {
+  @apply border py-1 px-3;
+}
+
+.editor td {
+  @apply border py-1 px-3;
+}
