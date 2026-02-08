@@ -50,6 +50,7 @@ function RouteComponent() {
             scrap={{
               id: s.id,
               content: s.body,
+              createdAt: s.createdAt.toString(),
             }}
             owner={{
               id: s.userId,

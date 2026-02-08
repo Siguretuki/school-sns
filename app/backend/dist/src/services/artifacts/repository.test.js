@@ -41,7 +41,7 @@ describe('ArtifactsRepository', () => {
                 userId: user.id,
                 summaryByAI: null,
                 status: 'DRAFT',
-                publishedAt: null,
+                publishedAt: new Date(),
             });
             await repo.addArtifact({
                 title: 'A2',
@@ -49,9 +49,10 @@ describe('ArtifactsRepository', () => {
                 userId: user.id,
                 summaryByAI: null,
                 status: 'DRAFT',
-                publishedAt: null,
+                publishedAt: new Date(),
             });
             const results = await repo.getArtifacts();
+            console.log(results);
             expect(results).toHaveLength(2);
         });
         it('ARTIFACT_REPO_004: limitとpageによるページネーションが正しく機能すること', async () => {
@@ -63,7 +64,7 @@ describe('ArtifactsRepository', () => {
                     userId: user.id,
                     summaryByAI: null,
                     status: 'DRAFT',
-                    publishedAt: null,
+                    publishedAt: new Date(),
                 });
             }
             const page1 = await repo.getArtifacts({ page: 1, limit: 1 });
@@ -81,7 +82,7 @@ describe('ArtifactsRepository', () => {
                 userId: u1.id,
                 summaryByAI: null,
                 status: 'DRAFT',
-                publishedAt: null,
+                publishedAt: new Date(),
             });
             await repo.addArtifact({
                 title: 'U2-A',
@@ -89,7 +90,7 @@ describe('ArtifactsRepository', () => {
                 userId: u2.id,
                 summaryByAI: null,
                 status: 'DRAFT',
-                publishedAt: null,
+                publishedAt: new Date(),
             });
             // ID指定
             const resById = await repo.getArtifacts({ ids: [a1.id] });

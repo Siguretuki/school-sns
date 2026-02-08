@@ -20,6 +20,7 @@ const isTest = process.env.NODE_ENV === 'test'
 // 1. Redisクライアントの初期化
 // ---------------------------------------------------------
 
+// @ts-ignore
 const redisClient = new ioredis.Redis({
   host: 'redis',
   port: 6379,
@@ -27,21 +28,21 @@ const redisClient = new ioredis.Redis({
   keyPrefix: 'app:',
 
   // 接続リトライ設定（再接続の戦略）
-  retryStrategy: (times) => {
+  retryStrategy: (times: number) => {
     const delay = Math.min(times * 50, 2000)
     return delay
   },
 })
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
+// @ts-ignore
 const redisMockClient = new Redis({
   // このRedisはコンスラクト可能ではないと言われるがコンストラクタです。
   host: 'redis',
   port: 6379,
   db: 0,
   keyPrefix: 'app:',
-}) as ioredis.Redis // Redis-mock自体がデフォルトでコンストラクタらしいからRedisを返せます
+}) as unknown as any // Redis-mockとioredisの型不一致回避
 
 export const redis = isTest ? redisMockClient : redisClient
 

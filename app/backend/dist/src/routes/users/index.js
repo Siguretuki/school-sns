@@ -4,7 +4,7 @@ import z from 'zod';
 import { authCheck } from '../../middleware/authCheck.js';
 import { CannotFollowSelfError } from '../../services/users/error.js';
 import { usersService } from '../../services/users/index.js';
-import { editUserRequestSchema, getUserDetailResponseSchema, userArtifactsResponseSchema, } from './schema.js';
+import { editUserRequestSchema, getUserDetailResponseSchema, userArtifactsResponseSchema, userContentsQuerySchema, } from './schema.js';
 export const users = new Hono()
     .get('/me', describeRoute({
     tags: ['Users'],
@@ -196,9 +196,13 @@ export const users = new Hono()
             description: 'Unexpected error occurred',
         },
     },
-}), async (c) => {
+}), authCheck, validator('query', userContentsQuerySchema), async (c) => {
     const { userId } = c.req.param();
-    const result = await usersService.getContentsByUserId(userId);
+    const query = c.req.valid('query');
+    const result = await usersService.getContentsByUserId(userId, {
+        type: query?.type,
+        accessUserId: c.var.user.userId,
+    });
     if (result.type === 'Failure') {
         return c.json({ message: 'Unexpected error occurred' }, 500);
     }

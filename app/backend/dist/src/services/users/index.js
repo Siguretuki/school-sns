@@ -35,8 +35,11 @@ export const usersService = {
         const followees = await usersRepository.getFollowees(userId);
         return Result.succeed(followees);
     },
-    getContentsByUserId: async (userId) => {
-        const contents = await usersRepository.getContentsByUserId(userId);
+    getContentsByUserId: async (userId, options) => {
+        const contents = await usersRepository.getContentsByUserId(userId, {
+            type: options?.type,
+            onlyPublished: options?.accessUserId !== userId,
+        });
         return Result.succeed(contents);
     },
 };

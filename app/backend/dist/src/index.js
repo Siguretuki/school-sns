@@ -22,6 +22,7 @@ export const app = new Hono()
         return c.json({ error: 'Internal Server Error' }, 500);
     }
 });
+export default app;
 if (process.env.NODE_ENV !== 'test') {
     serve({
         fetch: app.fetch,

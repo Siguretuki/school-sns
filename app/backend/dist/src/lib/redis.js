@@ -1,10 +1,10 @@
-import ioredis from 'ioredis';
-import Redis from 'ioredis-mock';
+import Redis from 'ioredis';
+import RedisMock from 'ioredis-mock';
 const isTest = process.env.NODE_ENV === 'test';
 // ---------------------------------------------------------
 // 1. Redisクライアントの初期化
 // ---------------------------------------------------------
-const redisClient = new ioredis.Redis({
+const redisClient = new Redis({
     host: 'redis',
     port: 6379,
     db: 0,
@@ -17,7 +17,7 @@ const redisClient = new ioredis.Redis({
 });
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-const redisMockClient = new Redis({
+const redisMockClient = new RedisMock({
     // このRedisはコンスラクト可能ではないと言われるがコンストラクタです。
     host: 'redis',
     port: 6379,

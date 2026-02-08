@@ -116,9 +116,6 @@ export const auth = new Hono()
         email: googleUser.email,
         name: googleUser.name,
         picture: googleUser.picture,
-        accessToken: token.token,
-        refreshToken: token.refresh_token,
-        expiresIn: token.expires_in,
     });
     if (result.type === 'Failure') {
         return c.json({ message: result.error.message }, 401);

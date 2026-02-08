@@ -1,4 +1,3 @@
-import { describe, it, expect } from 'vitest';
 import { prisma } from '../../lib/prisma.js';
 import { createTestUser } from '../../testing/factories.js';
 import { searchRepository } from './repository.js';
@@ -13,10 +12,16 @@ describe('SearchRepository', () => {
                     title: 'TypeScript Tutorial',
                     body: 'Content',
                     userId: user.id,
+                    publishedAt: new Date(),
                 },
             });
             await prisma.artifacts.create({
-                data: { title: 'Rust Guide', body: 'Content', userId: user.id },
+                data: {
+                    title: 'Rust Guide',
+                    body: 'Content',
+                    userId: user.id,
+                    publishedAt: new Date(),
+                },
             });
             const results = await repo.findArtifactsByKeyword('TypeScript');
             expect(results).toHaveLength(1);
@@ -29,10 +34,16 @@ describe('SearchRepository', () => {
                     title: 'No Match',
                     body: 'This is about Python programming',
                     userId: user.id,
+                    publishedAt: new Date(),
                 },
             });
             await prisma.artifacts.create({
-                data: { title: 'No Match', body: 'Just text', userId: user.id },
+                data: {
+                    title: 'No Match',
+                    body: 'Just text',
+                    userId: user.id,
+                    publishedAt: new Date(),
+                },
             });
             const results = await repo.findArtifactsByKeyword('Python');
             expect(results).toHaveLength(1);

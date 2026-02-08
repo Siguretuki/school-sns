@@ -26,4 +26,9 @@ const userArtifactsResponseSchema = z.object({
     updatedAt: z.coerce.string(),
     publishedAt: z.coerce.string().nullable(),
 });
-export { editUserRequestSchema, getUserDetailResponseSchema, userArtifactsResponseSchema, };
+const userContentsQuerySchema = z
+    .object({
+    type: z.enum(['artifacts', 'scraps']).optional(),
+})
+    .optional();
+export { editUserRequestSchema, getUserDetailResponseSchema, userArtifactsResponseSchema, userContentsQuerySchema, };

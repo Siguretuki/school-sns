@@ -103,13 +103,14 @@ describe('UserRepository', () => {
                 },
             });
             const contents = await repo.getContentsByUserId(user.id);
-            expect(contents).toHaveLength(1);
-            expect(contents[0].userId).toBe(user.id);
+            expect(contents.artifacts).toHaveLength(1);
+            expect(contents.artifacts[0].userId).toBe(user.id);
         });
         it('USER_REPO_014: コンテンツを持たないユーザーの場合に空配列を返すこと', async () => {
             const user = await createTestUser();
             const contents = await repo.getContentsByUserId(user.id);
-            expect(contents).toEqual([]);
+            expect(contents.artifacts).toEqual([]);
+            expect(contents.scraps).toEqual([]);
         });
     });
     describe('Advanced (Cascade / Partial Update)', () => {
