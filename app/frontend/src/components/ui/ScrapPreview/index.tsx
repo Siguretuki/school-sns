@@ -38,7 +38,7 @@ const ScrapPreview: React.FC<Props> = ({ owner, scrap, className }) => {
           className,
         )}
       >
-        <div className="flex justify-between items-start mb-2">
+        <div className="flex justify-between items-center mb-2">
           <IconWithLabel
             className="gap-3"
             icon={() => (
@@ -50,9 +50,11 @@ const ScrapPreview: React.FC<Props> = ({ owner, scrap, className }) => {
             )}
             label={() => (
               <div className="flex items-center gap-2">
-                <span className="font-bold text-slate-900">{owner.name}</span>
-                <span className="text-slate-500 text-sm">•</span>
-                <span className="text-slate-500 text-sm">
+                <span className="font-bold text-slate-900 line-clamp-1 break-all">
+                  {owner.name}
+                </span>
+                <span className="text-slate-500 text-sm shrink-0">•</span>
+                <span className="text-slate-500 text-sm whitespace-nowrap shrink-0">
                   {formatDistanceToNow(new Date(scrap.createdAt), {
                     addSuffix: true,
                     locale: ja,
@@ -61,7 +63,7 @@ const ScrapPreview: React.FC<Props> = ({ owner, scrap, className }) => {
               </div>
             )}
           />
-          <button className="text-slate-400 hover:text-slate-600 relative z-20">
+          <button className="text-slate-400 hover:text-slate-600 relative z-20 shrink-0 ml-8">
             <MoreHorizontal size={20} />
           </button>
         </div>

@@ -1,8 +1,8 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { Link, createLazyFileRoute } from '@tanstack/react-router'
 import { useFetchScrapsOptions } from '@/api/routes/scraps'
-import FilterTag from '@/components/ui/FilterTag'
 import ScrapPreview from '@/components/ui/ScrapPreview'
+import StickyFilterBar from '@/components/ui/StickyFilterBar'
 import { FILTERS, FILTER_LABELS } from '@/features/timeline/scraps/constants'
 import Popover from '@/components/layout/Popover'
 import NewPostButton from '@/features/timeline/components/NewPostButton'
@@ -18,20 +18,14 @@ function RouteComponent() {
   const navigate = Route.useNavigate()
 
   return (
-    <div className="flex flex-col gap-3 w-full">
-      <div className="flex gap-3 p-3 border-b border-b-slate-200 overflow-x-auto">
-        {FILTERS.map((f) => (
-          <FilterTag
-            key={f}
-            label={FILTER_LABELS[f]}
-            isSelected={filter === f}
-            onClick={() => {
-              navigate({ search: (s) => ({ ...s, filter: f }) })
-            }}
-          />
-        ))}
-      </div>
-      <div className="flex flex-col gap-3 px-2 py-4">
+    <div className="w-full">
+      <StickyFilterBar
+        items={FILTERS}
+        selected={filter}
+        getLabel={(f) => FILTER_LABELS[f]}
+        onSelect={(f) => navigate({ search: (s) => ({ ...s, filter: f }) })}
+      />
+      <div className="flex flex-col gap-3 px-2 mt-3">
         {data
           .sort(
             (a, b) =>

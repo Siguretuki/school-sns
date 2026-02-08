@@ -62,7 +62,7 @@ export default function Header() {
   return (
     <header
       className={cn(
-        'bg-slate-50 px-2 py-2 flex items-center shadow h-15 overflow-y-clip border-b border-b-slate-500',
+        'bg-slate-50 px-2 py-2 flex items-center shadow h-[3.75rem] overflow-y-clip border-b border-b-slate-500',
         isAuthPage ? 'justify-center' : 'justify-between',
       )}
     >

@@ -22,7 +22,7 @@ const ArtifactPreview: React.FC<Props> = ({ owner, artifact }) => {
       key={artifact.id}
       to="/timeline/artifacts/detail/$id"
       params={{ id: artifact.id }}
-      className="group flex flex-row bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow"
+      className="group flex flex-row bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
     >
       {/* Thumbnail (Left) */}
       <div className="w-32 sm:w-48 bg-slate-100 flex items-center justify-center shrink-0">
@@ -32,21 +32,6 @@ const ArtifactPreview: React.FC<Props> = ({ owner, artifact }) => {
       {/* Content (Right) */}
       <div className="flex flex-col p-4 w-full gap-2">
         {/* Header: Badge & User/Time */}
-        <div className="flex justify-between items-start">
-          <div className="flex items-center gap-3">
-            <span className="bg-emerald-100 text-emerald-600 text-xs font-bold px-2 py-0.5 rounded-md">
-              ARTIFACT
-            </span>
-            <span className="text-slate-500 text-xs">
-              {artifact.publishedAt
-                ? formatDistanceToNow(new Date(artifact.publishedAt), {
-                    addSuffix: true,
-                    locale: ja,
-                  })
-                : '未公開'}
-            </span>
-          </div>
-        </div>
 
         {/* Title & Summary */}
         <div className="flex flex-col gap-1">
@@ -70,6 +55,15 @@ const ArtifactPreview: React.FC<Props> = ({ owner, artifact }) => {
             />
             <span className="text-xs text-slate-700 font-medium">
               {owner.name}
+            </span>
+            <span className="text-slate-400 text-xs">•</span>
+            <span className="text-slate-500 text-xs whitespace-nowrap shrink-0">
+              {artifact.publishedAt
+                ? formatDistanceToNow(new Date(artifact.publishedAt), {
+                    addSuffix: true,
+                    locale: ja,
+                  })
+                : '未公開'}
             </span>
           </div>
         </div>
