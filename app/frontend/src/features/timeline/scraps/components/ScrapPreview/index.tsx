@@ -1,62 +1,98 @@
 import { Link } from '@tanstack/react-router'
-import { Heart, MessageSquare } from 'lucide-react'
-import type { Owner } from '@/features/timeline/types'
+import { Heart, MessageSquare, MoreHorizontal } from 'lucide-react'
 import Avatar from '@/components/ui/Avatar'
 import { cn } from '@/utils/cn'
 import IconWithLabel from '@/components/ui/IconWithLabel'
 import MarkdownViewer from '@/features/timeline/components/MarkdownViewer'
+import type { Owner } from '@/features/timeline/types'
 
 interface Props {
   owner: Owner
   scrap: {
     id: string
     content: string
+    createdAt: string
+    commentCount?: number
+    likeCount?: number
   }
   className?: string
 }
 
 const ScrapPreview: React.FC<Props> = ({ owner, scrap, className }) => {
   return (
-    <div className="relative">
+    <div className="relative group">
       <Link
         to="/profile/$id/$userName"
         params={{ id: owner.id, userName: owner.name }}
-        className="absolute top-4.5 left-4 z-10 w-6 h-6 rounded-full"
+        className="absolute top-4 left-4 z-10 w-10 h-10 rounded-full"
       />
 
       <Link
         to="/timeline/scraps/detail/$id"
         params={{ id: scrap.id }}
         className={cn(
-          'flex flex-col bg-slate-100/80 border border-slate-400/60 ',
+          'flex flex-col bg-white border border-slate-200 shadow-sm rounded-xl p-4',
           className,
         )}
       >
-        <IconWithLabel
-          className="gap-3"
-          icon={() => (
-            <Avatar
-              src={owner.avatarUrl ?? undefined}
-              alt={owner.name}
-              className="w-6 h-6 "
-            />
-          )}
-          label={() => (
-            <span className="font-bold text-xl pb-1.5">{owner.name}</span>
-          )}
-        />
+        <div className="flex justify-between items-start mb-2">
+          <IconWithLabel
+            className="gap-3"
+            icon={() => (
+              <Avatar
+                src={owner.avatarUrl ?? undefined}
+                alt={owner.name}
+                className="w-10 h-10"
+              />
+            )}
+            label={() => (
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-slate-900">{owner.name}</span>
+                <span className="text-slate-500 text-sm">•</span>
+                <span className="text-slate-500 text-sm">
+                  0h {/* TODO:投稿から何時間か知らせるシステムの導入 */}
+                </span>
+              </div>
+            )}
+          />
+          <button className="text-slate-400 hover:text-slate-600 relative z-20">
+            <MoreHorizontal size={20} />
+          </button>
+        </div>
+
         <MarkdownViewer
           mdSource={scrap.content}
-          className="text-slate-800 whitespace-pre-wrap wrap-break-words"
+          className="text-slate-800 whitespace-pre-wrap break-words text-base mb-3 leading-relaxed"
         />
-        <div className="flex flex-row gap-4 w-full justify-start">
+        
+        <div className="flex flex-row gap-6 w-full justify-start">
           <IconWithLabel
-            icon={() => <Heart className="text-slate-400" />}
-            label={() => <span className="text-slate-600">0</span>}
+            className="gap-1.5 group/heart"
+            icon={() => (
+              <Heart
+                size={18}
+                className="text-slate-500 group-hover/heart:stroke-pink-500 transition-colors"
+              />
+            )}
+            label={() => (
+              <span className="text-sm font-medium text-slate-500 group-hover/heart:text-pink-500 transition-colors">
+                {scrap.likeCount ?? 0}
+              </span>
+            )}
           />
           <IconWithLabel
-            icon={() => <MessageSquare className="text-slate-400" />}
-            label={() => <span className="text-slate-600">0</span>}
+            className="gap-1.5 group/comment"
+            icon={() => (
+              <MessageSquare
+                size={18}
+                className="text-slate-500 group-hover/comment:stroke-blue-500 transition-colors"
+              />
+            )}
+            label={() => (
+              <span className="text-sm font-medium text-slate-500 group-hover/comment:text-blue-500 transition-colors">
+                {scrap.commentCount ?? 0}
+              </span>
+            )}
           />
         </div>
       </Link>

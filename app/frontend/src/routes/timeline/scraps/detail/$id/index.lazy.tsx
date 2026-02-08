@@ -57,8 +57,11 @@ function RouteComponent() {
             scrap={{
               id: r.id,
               content: r.body,
+              createdAt: r.createdAt,
+              commentCount: 0,
+              likeCount: 0,
             }}
-            className="px-4 py-3 rounded-lg shadow-sm gap-3"
+            className="hover:bg-slate-50 transition-colors"
           />
         ))}
       </div>
