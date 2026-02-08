@@ -27,7 +27,7 @@ const footerItems: Array<FooterItem> = [
     icon: Search,
   },
   {
-    path: '/profile/$id/$userName',
+    path: '/profile',
     text: 'Profile',
     icon: User,
   },

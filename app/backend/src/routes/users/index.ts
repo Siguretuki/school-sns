@@ -8,6 +8,7 @@ import {
   editUserRequestSchema,
   getUserDetailResponseSchema,
   userArtifactsResponseSchema,
+  userContentsQuerySchema,
 } from './schema.js'
 
 export const users = new Hono()
@@ -254,9 +255,16 @@ export const users = new Hono()
         },
       },
     }),
+    authCheck,
+    validator('query', userContentsQuerySchema),
     async (c) => {
       const { userId } = c.req.param()
-      const result = await usersService.getContentsByUserId(userId)
+      const query = c.req.valid('query')
+
+      const result = await usersService.getContentsByUserId(userId, {
+        type: query?.type,
+        accessUserId: c.var.user.userId,
+      })
 
       if (result.type === 'Failure') {
         return c.json({ message: 'Unexpected error occurred' }, 500)

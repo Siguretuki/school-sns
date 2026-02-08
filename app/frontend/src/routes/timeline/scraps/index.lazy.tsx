@@ -2,7 +2,7 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 import { Link, createLazyFileRoute } from '@tanstack/react-router'
 import { useFetchScrapsOptions } from '@/api/routes/scraps'
 import FilterTag from '@/components/ui/FilterTag'
-import ScrapPreview from '@/features/timeline/scraps/components/ScrapPreview'
+import ScrapPreview from '@/components/ui/ScrapPreview'
 import { FILTERS, FILTER_LABELS } from '@/features/timeline/scraps/constants'
 import Popover from '@/components/layout/Popover'
 import NewPostButton from '@/features/timeline/components/NewPostButton'
@@ -50,7 +50,7 @@ function RouteComponent() {
                 content: d.body,
                 createdAt: d.createdAt,
                 commentCount: 0, // TODO: Fetch from API
-                likeCount: 0,    // TODO: Fetch from API
+                likeCount: 0, // TODO: Fetch from API
               }}
               className="hover:bg-slate-50 transition-colors"
             />

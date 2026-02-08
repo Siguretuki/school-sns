@@ -31,8 +31,15 @@ const userArtifactsResponseSchema = z.object({
   publishedAt: z.coerce.string().nullable(),
 })
 
+const userContentsQuerySchema = z
+  .object({
+    type: z.enum(['artifacts', 'scraps']).optional(),
+  })
+  .optional()
+
 export {
   editUserRequestSchema,
   getUserDetailResponseSchema,
   userArtifactsResponseSchema,
+  userContentsQuerySchema,
 }

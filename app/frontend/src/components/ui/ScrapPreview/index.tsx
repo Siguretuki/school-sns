@@ -1,10 +1,13 @@
 import { Link } from '@tanstack/react-router'
 import { Heart, MessageSquare, MoreHorizontal } from 'lucide-react'
+import { formatDistanceToNow } from 'date-fns'
+import { ja } from 'date-fns/locale'
+import type { Owner } from '@/features/timeline/types'
+import type React from 'react'
 import Avatar from '@/components/ui/Avatar'
 import { cn } from '@/utils/cn'
 import IconWithLabel from '@/components/ui/IconWithLabel'
 import MarkdownViewer from '@/features/timeline/components/MarkdownViewer'
-import type { Owner } from '@/features/timeline/types'
 
 interface Props {
   owner: Owner
@@ -50,7 +53,10 @@ const ScrapPreview: React.FC<Props> = ({ owner, scrap, className }) => {
                 <span className="font-bold text-slate-900">{owner.name}</span>
                 <span className="text-slate-500 text-sm">•</span>
                 <span className="text-slate-500 text-sm">
-                  0h {/* TODO:投稿から何時間か知らせるシステムの導入 */}
+                  {formatDistanceToNow(new Date(scrap.createdAt), {
+                    addSuffix: true,
+                    locale: ja,
+                  })}
                 </span>
               </div>
             )}
@@ -64,7 +70,7 @@ const ScrapPreview: React.FC<Props> = ({ owner, scrap, className }) => {
           mdSource={scrap.content}
           className="text-slate-800 whitespace-pre-wrap break-words text-base mb-3 leading-relaxed"
         />
-        
+
         <div className="flex flex-row gap-6 w-full justify-start">
           <IconWithLabel
             className="gap-1.5 group/heart"
