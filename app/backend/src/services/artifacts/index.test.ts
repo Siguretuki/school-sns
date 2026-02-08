@@ -117,7 +117,7 @@ describe('ArtifactsService', () => {
       expect(result.type).toBe('Success')
       if (result.type === 'Success') {
         expect(result.value).toHaveLength(1)
-        expect(result.value[0].userId).toBe(followee.id)
+        expect(result.value[0].user.id).toBe(followee.id)
       }
     })
   })

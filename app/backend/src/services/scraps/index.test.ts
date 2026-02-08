@@ -19,7 +19,7 @@ describe('ScrapsService', () => {
       await prisma.scraps.create({
         data: {
           title: 'Root Scrap',
-          body: 'Body',
+          body: 'Root Scrap',
           userId: user.id,
           parentId: null,
         },
@@ -28,14 +28,14 @@ describe('ScrapsService', () => {
       const parent = await prisma.scraps.create({
         data: {
           title: 'Parent',
-          body: 'Body',
+          body: 'Parent',
           userId: user.id,
         },
       })
       await prisma.scraps.create({
         data: {
           title: 'Child Scrap',
-          body: 'Body',
+          body: 'Child Scrap',
           userId: user.id,
           parentId: parent.id,
         },
@@ -48,7 +48,7 @@ describe('ScrapsService', () => {
         // デフォルトでは onlyRootScraps: true なので、子要素は含まれないはず
         // Root Scrap + Parent Scrap = 2件
         expect(result.value).toHaveLength(2)
-        const titles = result.value.map((s) => s.title)
+        const titles = result.value.map((s) => s.body)
         expect(titles).toContain('Root Scrap')
         expect(titles).toContain('Parent')
         expect(titles).not.toContain('Child Scrap')
@@ -65,7 +65,7 @@ describe('ScrapsService', () => {
       await prisma.scraps.create({
         data: {
           title: 'Target Scrap',
-          body: 'Body',
+          body: 'Target Scrap',
           userId: user.id,
           tagScraps: { create: { tagId: tag.id } },
         },
@@ -84,13 +84,12 @@ describe('ScrapsService', () => {
       const result = await scrapsService.getScraps({
         tagIds: [tag.id],
         onlyRootScraps: false,
-        includeUserInfo: false,
       })
 
       expect(result.type).toBe('Success')
       if (result.type === 'Success') {
         expect(result.value).toHaveLength(1)
-        expect(result.value[0].title).toBe('Target Scrap')
+        expect(result.value[0].body).toBe('Target Scrap')
       }
     })
 
@@ -130,7 +129,7 @@ describe('ScrapsService', () => {
       expect(result.type).toBe('Success')
       if (result.type === 'Success') {
         expect(result.value).toHaveLength(1)
-        expect(result.value[0].userId).toBe(followee.id)
+        expect(result.value[0].user.id).toBe(followee.id)
       }
     })
   })

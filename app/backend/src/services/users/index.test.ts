@@ -24,7 +24,7 @@ describe('UsersService', () => {
       expect(result.type).toBe('Success')
       if (result.type === 'Success') {
         expect(result.value.id).toBe(user.id)
-        expect(result.value.email).toBe(user.email)
+        expect(result.value.avatarUrl).toBe(user.avatarUrl)
       }
     })
 
@@ -208,9 +208,9 @@ describe('UsersService', () => {
 
       expect(result.type).toBe('Success')
       if (result.type === 'Success') {
-        // Scrapsが1件取得できるはず
-        expect(result.value).toHaveLength(1)
-        expect(result.value[0].title).toBe('Test Scrap')
+        // Artifactsが1件取得できるはず
+        expect(result.value?.artifacts).toHaveLength(1)
+        expect(result.value?.artifacts[0].title).toBe('Test Scrap')
       }
     })
   })
