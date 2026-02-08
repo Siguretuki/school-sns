@@ -44,7 +44,7 @@ export const artifactsService = {
     )
       .filter(isPublished)
       .filter(isStatusString)
-      .map(toTags)
+      .map((artifact) => toTags(artifact))
 
     return Result.succeed(artifacts)
   },
