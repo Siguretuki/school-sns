@@ -22,8 +22,8 @@ function RouteComponent() {
   } = useSuspenseQuery(useFetchScrapDetailOptions(params.id))
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-col border-y-slate-800 bg-slate-100/70">
+    <div className="flex flex-col pb-20">
+      <div className="flex flex-col bg-white">
         <ScrapDetail
           owner={{
             id: rootScrap.user.id,
@@ -40,12 +40,16 @@ function RouteComponent() {
           isEditable={userId === rootScrap.user.id}
         />
         <Actions
+          isLiked={false} // TODO: Fetch from API
+          onLike={() => {}} // TODO: Implement mutation
+          onReply={() => {}} // TODO: Navigate to reply
           likesCount={0}
           commentsCount={replies.length}
-          targetId={rootScrap.id}
         />
       </div>
-      <div className="flex flex-col gap-3 px-2">
+
+      {/* Replies Section */}
+      <div className="flex flex-col">
         {replies.map((r) => (
           <ScrapPreview
             key={r.id}
@@ -57,8 +61,11 @@ function RouteComponent() {
             scrap={{
               id: r.id,
               content: r.body,
+              createdAt: r.createdAt,
+              likeCount: 0,
+              commentCount: 0,
             }}
-            className="px-4 py-3 rounded-lg shadow-sm gap-3"
+            className="border-x-0 border-t-0 border-b border-slate-200 rounded-none shadow-none px-4 py-3 hover:bg-slate-50 transition-colors"
           />
         ))}
       </div>
