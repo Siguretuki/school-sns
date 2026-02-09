@@ -75,6 +75,9 @@ function RouteComponent() {
             scrap={{
               id: s.id,
               content: s.body,
+              createdAt: (s as any).createdAt ?? new Date().toISOString(), // Fallback or unsafe cast if data exists
+              likeCount: (s as any)._count?.likes,
+              commentCount: (s as any)._count?.scraps,
             }}
             owner={{
               id: userInfo.id,
