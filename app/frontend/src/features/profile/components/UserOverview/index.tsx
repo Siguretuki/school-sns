@@ -11,7 +11,6 @@ interface Props {
   bio: string | null
   followersCount: number
   followingCount: number
-  artifactsCount: number
 }
 
 const UserOverview: React.FC<Props> = ({
@@ -21,7 +20,6 @@ const UserOverview: React.FC<Props> = ({
   bio,
   followersCount,
   followingCount,
-  artifactsCount,
 }) => {
   const handle = userName.startsWith('@') ? userName : `@${userName}`
 
@@ -66,10 +64,6 @@ const UserOverview: React.FC<Props> = ({
         >
           <CountViewer label="Following" count={followingCount} />
         </Link>
-        <Divider orientation="vertical" />
-        <div className="flex-1">
-          <CountViewer label="Artifacts" count={artifactsCount} />
-        </div>
       </div>
     </div>
   )

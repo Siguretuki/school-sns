@@ -100,7 +100,6 @@ function RouteComponent() {
           bio={userInfo.bio}
           followersCount={userInfo._count.userFolloweeRelationships}
           followingCount={userInfo._count.userFollowerRelationships}
-          artifactsCount={userInfo._count.artifacts}
         />
         <div className="flex w-full gap-3">
           {!isSelfProfile && (
