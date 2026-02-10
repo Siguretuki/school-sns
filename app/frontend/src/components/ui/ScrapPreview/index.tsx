@@ -66,7 +66,7 @@ const ScrapPreview: React.FC<Props> = ({ owner, scrap, className }) => {
 
         <MarkdownViewer
           mdSource={scrap.content}
-          className="text-slate-800 whitespace-pre-wrap break-words text-base mb-3 leading-relaxed"
+          className="text-slate-800 whitespace-pre-wrap wrap-break-word text-base mb-3 leading-relaxed"
         />
 
         <div className="flex flex-row gap-6 w-full justify-start">
