@@ -1,4 +1,5 @@
 import { vi } from 'vitest'
+import { summarizePost } from '../../lib/langchain/index.js'
 import { prisma } from '../../lib/prisma.js'
 import { createTestUser } from '../../testing/factories.js'
 import { cleanupDatabase } from '../../testing/setup.js'
@@ -11,9 +12,55 @@ vi.mock('../../lib/langchain/index.js', () => ({
   summarizePost: vi.fn().mockResolvedValue({ content: 'AI Generated Summary' }),
 }))
 
+const waitForAsyncExpectation = async (
+  expectation: () => void | Promise<void>,
+  timeoutMs: number = 2000,
+  intervalMs: number = 50,
+) => {
+  const formatUnknownError = (value: unknown): string => {
+    if (typeof value === 'string') return value
+    if (typeof value === 'number') return String(value)
+    if (typeof value === 'boolean') return String(value)
+    if (typeof value === 'bigint') return value.toString()
+    if (typeof value === 'symbol') return value.toString()
+    if (value === null) return 'null'
+    if (value === undefined) return 'undefined'
+
+    try {
+      return JSON.stringify(value)
+    } catch {
+      return 'Unserializable error'
+    }
+  }
+
+  const startedAt = Date.now()
+  let lastError: unknown = null
+
+  while (Date.now() - startedAt < timeoutMs) {
+    try {
+      await expectation()
+      return
+    } catch (error) {
+      lastError = error
+      await new Promise((resolve) => setTimeout(resolve, intervalMs))
+    }
+  }
+
+  if (lastError instanceof Error) {
+    throw lastError
+  }
+
+  if (lastError !== null) {
+    throw new Error(formatUnknownError(lastError))
+  }
+
+  throw new Error('Timed out while waiting for asynchronous expectation')
+}
+
 describe('ArtifactsService', () => {
   // テスト実行ごとにデータベースをクリーンアップ
   beforeEach(async () => {
+    vi.clearAllMocks()
     await cleanupDatabase()
   })
 
@@ -247,11 +294,60 @@ describe('ArtifactsService', () => {
         expect(result.value.publishedAt).toBeInstanceOf(Date)
       }
     })
+
+    it('ARTIFACTS_SERVICE_010: PUBLISHEDで新規作成した場合にバックグラウンドでAI要約が保存されること', async () => {
+      const user = await createTestUser()
+      const input = {
+        title: 'Published Artifact With Summary',
+        body: 'Body for summary',
+        userId: user.id,
+        status: 'PUBLISHED',
+      }
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const result = await artifactsService.addArtifact(input)
+
+      expect(result.type).toBe('Success')
+      if (result.type === 'Success') {
+        await waitForAsyncExpectation(async () => {
+          const updated = await prisma.artifacts.findUnique({
+            where: { id: result.value.id },
+          })
+          expect(updated?.summaryByAI).toBe('AI Generated Summary')
+        })
+      }
+    })
+
+    it('ARTIFACTS_SERVICE_011: DRAFTで新規作成した場合はバックグラウンド要約が実行されないこと', async () => {
+      const user = await createTestUser()
+      const input = {
+        title: 'Draft Artifact',
+        body: 'Draft body',
+        userId: user.id,
+        status: 'DRAFT',
+      }
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const result = await artifactsService.addArtifact(input)
+
+      expect(result.type).toBe('Success')
+      if (result.type === 'Success') {
+        await waitForAsyncExpectation(async () => {
+          const artifact = await prisma.artifacts.findUnique({
+            where: { id: result.value.id },
+          })
+          expect(artifact?.summaryByAI).toBeNull()
+        })
+      }
+      expect(vi.mocked(summarizePost)).not.toHaveBeenCalled()
+    })
   })
 
   describe('updateArtifact', () => {
     // 自身の記事内容を更新できるか検証
-    it('ARTIFACTS_SERVICE_010: 自身のアーティファクトの内容を更新できること', async () => {
+    it('ARTIFACTS_SERVICE_012: 自身のアーティファクトの内容を更新できること', async () => {
       const user = await createTestUser()
       const artifact = await prisma.artifacts.create({
         data: {
@@ -279,7 +375,7 @@ describe('ArtifactsService', () => {
     })
 
     // ステータスを公開に変更した際、日時が更新されるか検証
-    it('ARTIFACTS_SERVICE_012: ステータスをDRAFTからPUBLISHEDに変更した際に公開日時が更新されること', async () => {
+    it('ARTIFACTS_SERVICE_013: ステータスをDRAFTからPUBLISHEDに変更した際に公開日時が更新されること', async () => {
       const user = await createTestUser()
       const artifact = await prisma.artifacts.create({
         data: {
@@ -305,8 +401,72 @@ describe('ArtifactsService', () => {
       expect(updated?.publishedAt).not.toBeNull()
     })
 
+    it('ARTIFACTS_SERVICE_014: ステータスをDRAFTからPUBLISHEDに変更した場合にバックグラウンドでAI要約が保存されること', async () => {
+      const user = await createTestUser()
+      const artifact = await prisma.artifacts.create({
+        data: {
+          title: 'Draft Before Publish',
+          body: 'Body before publish',
+          userId: user.id,
+          status: 'DRAFT',
+          publishedAt: null,
+          summaryByAI: null,
+        },
+      })
+
+      const result = await artifactsService.updateArtifact(
+        artifact.id,
+        user.id,
+        {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
+          content: { status: 'PUBLISHED' } as any,
+        },
+      )
+      expect(result.type).toBe('Success')
+
+      await waitForAsyncExpectation(async () => {
+        const updated = await prisma.artifacts.findUnique({
+          where: { id: artifact.id },
+        })
+        expect(updated?.summaryByAI).toBe('AI Generated Summary')
+      })
+    })
+
+    it('ARTIFACTS_SERVICE_015: 既にPUBLISHEDの記事を更新しても自動要約は再実行されないこと', async () => {
+      const user = await createTestUser()
+      const artifact = await prisma.artifacts.create({
+        data: {
+          title: 'Already Published',
+          body: 'Body',
+          userId: user.id,
+          status: 'PUBLISHED',
+          publishedAt: new Date(),
+          summaryByAI: 'Existing Summary',
+        },
+      })
+
+      const result = await artifactsService.updateArtifact(
+        artifact.id,
+        user.id,
+        {
+          content: {
+            title: 'Already Published Updated',
+            status: 'PUBLISHED',
+          },
+        },
+      )
+
+      expect(result.type).toBe('Success')
+      expect(vi.mocked(summarizePost)).not.toHaveBeenCalled()
+
+      const updated = await prisma.artifacts.findUnique({
+        where: { id: artifact.id },
+      })
+      expect(updated?.summaryByAI).toBe('Existing Summary')
+    })
+
     // 他人の記事を更新できないよう保護されているか検証
-    it('ARTIFACTS_SERVICE_013: 他人のアーティファクトを更新しようとした場合にNotArtifactOwnerErrorが返ること', async () => {
+    it('ARTIFACTS_SERVICE_016: 他人のアーティファクトを更新しようとした場合にNotArtifactOwnerErrorが返ること', async () => {
       const owner = await createTestUser()
       const otherUser = await createTestUser()
       const artifact = await prisma.artifacts.create({
@@ -332,7 +492,7 @@ describe('ArtifactsService', () => {
 
   describe('deleteArtifact', () => {
     // 自身の記事を削除できるか検証
-    it('ARTIFACTS_SERVICE_014: 自身のアーティファクトを削除できること', async () => {
+    it('ARTIFACTS_SERVICE_017: 自身のアーティファクトを削除できること', async () => {
       const user = await createTestUser()
       const artifact = await prisma.artifacts.create({
         data: {
@@ -352,7 +512,7 @@ describe('ArtifactsService', () => {
     })
 
     // 他人の記事を削除できないよう保護されているか検証
-    it('ARTIFACTS_SERVICE_015: 他人のアーティファクトを削除しようとした場合にNotArtifactOwnerErrorが返ること', async () => {
+    it('ARTIFACTS_SERVICE_018: 他人のアーティファクトを削除しようとした場合にNotArtifactOwnerErrorが返ること', async () => {
       const owner = await createTestUser()
       const otherUser = await createTestUser()
       const artifact = await prisma.artifacts.create({
@@ -377,7 +537,7 @@ describe('ArtifactsService', () => {
 
   describe('summarizeArtifact', () => {
     // AI要約を実行し、結果がDBに保存されるか検証
-    it('ARTIFACTS_SERVICE_016: 指定したアーティファクトのAI要約が生成され保存されること', async () => {
+    it('ARTIFACTS_SERVICE_019: 指定したアーティファクトのAI要約が生成され保存されること', async () => {
       const user = await createTestUser()
       const artifact = await prisma.artifacts.create({
         data: {
@@ -400,16 +560,7 @@ describe('ArtifactsService', () => {
     })
 
     // 存在しない記事への要約リクエストがエラーになるか検証
-    it('ARTIFACTS_SERVICE_017: 存在しないアーティファクトの要約を試みた場合にArtifactNotFoundErrorが返ること', async () => {
-      const result = await artifactsService.summarizeArtifact('non-existent-id')
-
-      expect(result.type).toBe('Failure')
-      if (result.type === 'Failure') {
-        expect(result.error).toBeInstanceOf(ArtifactNotFoundError)
-      }
-    })
-
-    it('ARTIFACTS_SERVICE_017: 存在しないアーティファクトの要約を試みた場合にArtifactNotFoundErrorが返ること', async () => {
+    it('ARTIFACTS_SERVICE_020: 存在しないアーティファクトの要約を試みた場合にArtifactNotFoundErrorが返ること', async () => {
       const result = await artifactsService.summarizeArtifact('non-existent-id')
 
       expect(result.type).toBe('Failure')

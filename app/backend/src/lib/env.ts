@@ -21,7 +21,7 @@ const EnvSchema = z.object({
     .string()
     .nullable()
     .transform((val) => Number(val) || null),
-  LLM_PROVIDER: z.enum(['fake', 'gemini']).default('fake'),
+  LLM_PROVIDER: z.enum(['fake', 'google']).default('fake'),
   GOOGLE_ID: z.string(),
   GOOGLE_SECRET: z.string(),
   GOOGLE_REDIRECT_URI: z.string(),
