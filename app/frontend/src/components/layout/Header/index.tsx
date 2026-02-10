@@ -1,8 +1,7 @@
 import { Link, useMatch, useMatches } from '@tanstack/react-router'
-
+import { Settings } from 'lucide-react'
 import type { AppPath } from '@/types'
 import BackArrow from '@/components/ui/BackArrow'
-import Avatar from '@/components/ui/Avatar'
 import { cn } from '@/utils/cn'
 
 type TitlePath = Extract<
@@ -76,7 +75,7 @@ export default function Header() {
       </h1>
       {!isAuthPage && (
         <Link to="/settings" aria-label="設定へ移動">
-          <Avatar className="h-full py-1" />
+          <Settings className="w-7 h-7 text-slate-700" />
         </Link>
       )}
     </header>
