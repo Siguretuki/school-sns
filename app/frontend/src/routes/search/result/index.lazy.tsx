@@ -13,7 +13,7 @@ export const Route = createLazyFileRoute('/search/result/')({
 
 const TAB_LABELS: Record<SearchType, string> = {
   artifact: 'アーティファクト',
-  scrap: 'スクラップ',
+  scrap: '投稿',
   user: 'ユーザー',
   tag: 'タグ',
 }
@@ -89,6 +89,7 @@ function RouteComponent() {
               <Tab.Item
                 label={TAB_LABELS[type]}
                 isActive={data.type === type}
+                className="px-5"
               />
             </Link>
           ),

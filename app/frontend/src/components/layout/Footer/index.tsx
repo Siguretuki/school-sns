@@ -1,5 +1,5 @@
 import { Link, useMatches } from '@tanstack/react-router'
-import { FileText, LayoutGrid, Search, User } from 'lucide-react'
+import { LayoutGrid, MessageSquare, Search, User } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import type { AppPath } from '@/types'
 import { cn } from '@/utils/cn'
@@ -13,8 +13,8 @@ interface FooterItem {
 const footerItems: Array<FooterItem> = [
   {
     path: '/timeline/scraps',
-    text: 'Scraps',
-    icon: FileText,
+    text: 'Post',
+    icon: MessageSquare,
   },
   {
     path: '/timeline/artifacts',
