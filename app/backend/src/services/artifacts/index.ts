@@ -14,6 +14,24 @@ import {
 import { artifactsRepository } from './repository.js'
 import type { ArtifactOptions } from './type.js'
 
+const triggerSummaryInBackground = (artifactId: string) => {
+  void artifactsService
+    .summarizeArtifact(artifactId)
+    .then((result) => {
+      if (result.type === 'Failure') {
+        console.error(
+          `[artifacts] Failed to summarize artifact in background: ${artifactId} - ${result.error.message}`,
+        )
+      }
+    })
+    .catch((error: unknown) => {
+      console.error(
+        `[artifacts] Unexpected error while summarizing artifact in background: ${artifactId}`,
+        error,
+      )
+    })
+}
+
 export const artifactsService = {
   getArtifacts: async (
     options?: ArtifactOptions & { tagIds?: string[] },
@@ -85,6 +103,9 @@ export const artifactsService = {
     if (tagIds !== undefined) {
       await artifactsRepository.registerTags(artifact.id, tagIds)
     }
+    if (artifact.status === 'PUBLISHED') {
+      triggerSummaryInBackground(artifact.id)
+    }
 
     return Result.succeed(artifact)
   },
@@ -109,6 +130,10 @@ export const artifactsService = {
     if (!(await artifactsRepository.isOwnArtifact(artifactId, userId))) {
       return Result.fail(new NotArtifactOwnerError())
     }
+    const currentArtifact =
+      target.content?.status === 'PUBLISHED'
+        ? await artifactsRepository.getArtifactById(artifactId)
+        : null
 
     if (target.tagIds !== undefined) {
       await artifactsRepository.updateTags(artifactId, target.tagIds)
@@ -124,6 +149,13 @@ export const artifactsService = {
               : null
             : undefined,
       })
+    }
+    if (
+      currentArtifact !== null &&
+      currentArtifact.status === 'DRAFT' &&
+      target.content?.status === 'PUBLISHED'
+    ) {
+      triggerSummaryInBackground(artifactId)
     }
 
     return Result.succeed(undefined)

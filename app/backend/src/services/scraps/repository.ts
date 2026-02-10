@@ -72,14 +72,12 @@ export const scrapsRepository = {
       select: {
         id: true,
         body: true,
-        title: true,
         createdAt: true,
         updatedAt: true,
         scraps: {
           select: {
             id: true,
             body: true,
-            title: true,
             createdAt: true,
             updatedAt: true,
             _count: {

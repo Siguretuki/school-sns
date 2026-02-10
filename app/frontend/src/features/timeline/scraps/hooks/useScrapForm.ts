@@ -2,7 +2,6 @@ import { useForm } from '@tanstack/react-form'
 import z from 'zod'
 
 const postScrapFormSchema = z.object({
-  title: z.string().min(1, 'Title is required'),
   body: z.string().min(1, 'Body is required'),
   tags: z.array(z.string()),
 })
@@ -15,7 +14,6 @@ export const useScrapForm = (args: {
 }) => {
   const form = useForm({
     defaultValues: {
-      title: args.initialValues?.title ?? '',
       body: args.initialValues?.body ?? '',
       tags: args.initialValues?.tags ?? [],
     },

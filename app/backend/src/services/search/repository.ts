@@ -54,11 +54,6 @@ export const searchRepository = {
       where: {
         OR: [
           {
-            title: {
-              contains: keyword,
-            },
-          },
-          {
             body: {
               contains: keyword,
             },
@@ -68,7 +63,6 @@ export const searchRepository = {
       select: {
         id: true,
         body: true,
-        title: true,
         createdAt: true,
         updatedAt: true,
         _count: {

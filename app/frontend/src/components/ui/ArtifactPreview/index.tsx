@@ -25,7 +25,13 @@ const ArtifactPreview: React.FC<Props> = ({ owner, artifact }) => {
     >
       {/* Thumbnail (Left) */}
       <div className="w-32 sm:w-48 bg-slate-100 flex items-center justify-center shrink-0">
-        <ImageIcon className="text-slate-300 w-10 h-10" />
+        {/* 画像を表示する */}
+        {/* <ImageIcon className="text-slate-300 w-10 h-10" /> */}
+        <img
+          src={`https://picsum.photos/seed/${artifact.id}/400/400`}
+          alt={artifact.title}
+          className="w-full h-full object-cover"
+        />
       </div>
 
       {/* Content (Right) */}
