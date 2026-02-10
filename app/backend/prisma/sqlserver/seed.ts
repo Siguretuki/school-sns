@@ -31,7 +31,7 @@ async function main() {
       },
     })
     // https://www.dicebear.com を使ってアバター画像URLを生成
-    const avatarUrl = `https://api.dicebear.com/9.x/notionists-neutral/svg?seed=${user.id}`
+    const avatarUrl = `https://api.dicebear.com/9.x/thumbs/svg?seed=${user.id}`
     const updatedUser = await prisma.users.update({
       where: { id: user.id },
       data: { avatarUrl },
