@@ -12,4 +12,11 @@ class NotScrapOwnerError extends Error {
   }
 }
 
-export { NotScrapOwnerError, ScrapNotFoundError }
+class AlreadyLikedError extends Error {
+  constructor(message: string = 'Scrap is already liked by the user.') {
+    super(message)
+    this.name = 'AlreadyLikedError'
+  }
+}
+
+export { AlreadyLikedError, NotScrapOwnerError, ScrapNotFoundError }

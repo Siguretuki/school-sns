@@ -40,9 +40,10 @@ function RouteComponent() {
           isEditable={userId === rootScrap.user.id}
         />
         <Actions
-          likesCount={0}
+          likesCount={rootScrap._count.scrapLikes}
           commentsCount={replies.length}
           targetId={rootScrap.id}
+          isLiked={rootScrap.isLiked}
         />
       </div>
       <div className="flex flex-col gap-3 px-2">
@@ -57,11 +58,10 @@ function RouteComponent() {
             scrap={{
               id: r.id,
               content: r.body,
-              createdAt:
-                (r as { createdAt?: string }).createdAt ??
-                new Date().toISOString(),
-              likeCount: 0,
+              createdAt: r.createdAt,
+              likeCount: r._count.scrapLikes,
               commentCount: r._count.scraps,
+              isLiked: r.isLiked,
             }}
             className="px-4 py-3 rounded-lg shadow-sm gap-3"
           />

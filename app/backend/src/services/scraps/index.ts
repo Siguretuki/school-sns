@@ -1,14 +1,19 @@
 import { Result } from '@praha/byethrow'
 import type { Scraps } from '../../../generated/prisma/index.js'
-import { toTags } from '../../lib/formatter.js'
+import { toIsLiked, toTags } from '../../lib/formatter.js'
 import { TagNotFoundError } from '../tags/error.js'
 import { tagsRepository } from '../tags/repository.js'
-import { NotScrapOwnerError, ScrapNotFoundError } from './error.js'
+import {
+  AlreadyLikedError,
+  NotScrapOwnerError,
+  ScrapNotFoundError,
+} from './error.js'
 import { scrapsRepository } from './repository.js'
 import type { ScrapOptions } from './type.js'
 
 export const scrapsService = {
   getScraps: async (
+    userId: string,
     options?: ScrapOptions & { tagIds?: string[] },
     followingUserFilter?: { userId: string },
   ) => {
@@ -28,22 +33,29 @@ export const scrapsService = {
       : undefined
 
     const scraps = (
-      await scrapsRepository.getScraps({
+      await scrapsRepository.getScraps(userId, {
         ...options,
         onlyRootScraps: options?.onlyRootScraps ?? true,
         userIds,
         ids,
       })
-    ).map((scrap) => toTags(scrap))
+    )
+      .map((scrap) => toTags(scrap))
+      .map(toIsLiked)
 
     return Result.succeed(scraps)
   },
-  getScrapById: async (scrapId: string) => {
-    const scrap = await scrapsRepository.getScrapById(scrapId)
+  getScrapById: async (userId: string, scrapId: string) => {
+    const scrap = await scrapsRepository.getScrapById(userId, scrapId)
     if (scrap === null) {
       return Result.fail(new ScrapNotFoundError(scrapId))
     }
-    return Result.succeed(toTags(scrap))
+    const { scrapLikes, scraps, ...rest } = toTags(scrap)
+    return Result.succeed({
+      ...rest,
+      isLiked: scrapLikes.length > 0,
+      scraps: scraps.map(toIsLiked),
+    })
   },
   deleteScrap: async (scrapId: string, userId: string) => {
     if (!(await scrapsRepository.isOwnScrap(scrapId, userId))) {
@@ -87,5 +99,15 @@ export const scrapsService = {
     }
 
     return Result.succeed(undefined)
+  },
+  likeScrap: async (scrapId: string, userId: string) => {
+    if (await scrapsRepository.isAlreadyLiked(scrapId, userId)) {
+      return Result.fail(new AlreadyLikedError())
+    }
+    await scrapsRepository.likeScrap(scrapId, userId)
+    return Result.succeed(undefined)
+  },
+  unlikeScrap: async (scrapId: string, userId: string) => {
+    return await scrapsRepository.unlikeScrap(scrapId, userId)
   },
 }

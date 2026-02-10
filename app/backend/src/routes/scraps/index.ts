@@ -82,6 +82,7 @@ export const scraps = new Hono()
       const isFollowing = query?.isFollowing
 
       const result = await scrapsService.getScraps(
+        userId,
         query,
         isFollowing !== undefined && isFollowing ? { userId } : undefined,
       )
@@ -116,9 +117,11 @@ export const scraps = new Hono()
         },
       },
     }),
+    authCheck,
     async (c) => {
       const { scrapId } = c.req.param()
-      const result = await scrapsService.getScrapById(scrapId)
+      const userId = c.var.user.userId
+      const result = await scrapsService.getScrapById(userId, scrapId)
 
       if (result.type == 'Failure') {
         return c.json(
@@ -224,6 +227,87 @@ export const scraps = new Hono()
       return c.json(
         {
           message: 'Deletion successful',
+        },
+        200,
+      )
+    },
+  )
+  .post(
+    '/:scrapId/like',
+    describeRoute({
+      tags: ['Scraps'],
+      description: 'Like a scrap',
+      responses: {
+        200: {
+          description: 'Successful response',
+          content: {
+            'application/json': {
+              schema: resolver(
+                z.object({
+                  message: z.string(),
+                }),
+              ),
+            },
+          },
+        },
+        500: {
+          description: 'Internal Server Error',
+        },
+      },
+    }),
+    authCheck,
+    async (c) => {
+      const { scrapId } = c.req.param()
+      const userId = c.var.user.userId
+      const result = await scrapsService.likeScrap(scrapId, userId)
+
+      if (result.type === 'Failure') {
+        return c.json(
+          {
+            message: result.error.message,
+          },
+          400,
+        )
+      }
+      return c.json(
+        {
+          message: 'Scrap liked successfully',
+        },
+        200,
+      )
+    },
+  )
+  .delete(
+    '/:scrapId/like',
+    describeRoute({
+      tags: ['Scraps'],
+      description: 'Unlike a scrap',
+      responses: {
+        200: {
+          description: 'Successful response',
+          content: {
+            'application/json': {
+              schema: resolver(
+                z.object({
+                  message: z.string(),
+                }),
+              ),
+            },
+          },
+        },
+        500: {
+          description: 'Internal Server Error',
+        },
+      },
+    }),
+    authCheck,
+    async (c) => {
+      const { scrapId } = c.req.param()
+      const userId = c.var.user.userId
+      await scrapsService.unlikeScrap(scrapId, userId)
+      return c.json(
+        {
+          message: 'Scrap unliked successfully',
         },
         200,
       )

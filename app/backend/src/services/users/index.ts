@@ -1,4 +1,6 @@
 import { Result } from '@praha/byethrow'
+import z from 'zod'
+import { toIsLiked } from '../../lib/formatter.js'
 import {
   AlreadyFollowingError,
   CannotFollowSelfError,
@@ -6,6 +8,26 @@ import {
 } from './error.js'
 import { usersRepository } from './repository.js'
 import type { EditUserInfo } from './type.js'
+
+const userScrapSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  body: z.string(),
+  createdAt: z.union([z.string(), z.date()]),
+  updatedAt: z.union([z.string(), z.date()]),
+  _count: z.object({
+    scraps: z.number(),
+    scrapLikes: z.number(),
+  }),
+  scrapLikes: z.array(z.object({ id: z.string() })),
+  user: z.object({
+    id: z.string(),
+    userName: z.string(),
+    avatarUrl: z.string().nullable(),
+  }),
+})
+
+const userScrapsSchema = z.array(userScrapSchema).optional()
 
 export const usersService = {
   getUserDetail: async (id: string) => {
@@ -45,15 +67,32 @@ export const usersService = {
   },
   getContentsByUserId: async (
     userId: string,
+    accessUserId: string,
     options?: {
       type?: 'artifacts' | 'scraps'
       accessUserId?: string
     },
   ) => {
-    const contents = await usersRepository.getContentsByUserId(userId, {
-      type: options?.type,
-      onlyPublished: options?.accessUserId !== userId,
+    const contents = await usersRepository.getContentsByUserId(
+      userId,
+      accessUserId,
+      {
+        type: options?.type,
+        onlyPublished: options?.accessUserId !== userId,
+      },
+    )
+    if (contents === null) {
+      return Result.fail(new UserNotFoundError(userId))
+    }
+
+    const scrapsResult = userScrapsSchema.safeParse(contents.scraps)
+    if (!scrapsResult.success) {
+      return Result.fail(new Error('Invalid scrap data'))
+    }
+
+    return Result.succeed({
+      scraps: scrapsResult.data ? scrapsResult.data.map(toIsLiked) : undefined,
+      artifacts: contents.artifacts,
     })
-    return Result.succeed(contents)
   },
 }

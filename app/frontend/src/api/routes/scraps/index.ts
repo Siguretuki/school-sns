@@ -12,6 +12,7 @@ import { scrapsKeys } from '@/api/routes/scraps/key'
 import { apiClient } from '@/api/shared/apiClient'
 import { convertQueryParams } from '@/api/shared/convertQueryParams'
 import { parseApiError } from '@/api/shared/error'
+import { usersKeys } from '@/api/routes/users/key'
 
 const useFetchScrapsOptions = (query?: GetScrapsQuerySchema) =>
   queryOptions({
@@ -123,10 +124,69 @@ const useDeleteScrap = (id: string) => {
   })
 }
 
+const useLikeScrapMutation = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (scrapId: string) => {
+      const res = await apiClient.scraps[':scrapId'].like.$post({
+        param: {
+          scrapId,
+        },
+      })
+
+      if (!res.ok) {
+        return parseApiError(res)
+      }
+      return await res.json()
+    },
+    onSuccess: (_, scrapId) => {
+      queryClient.invalidateQueries({
+        queryKey: scrapsKeys.lists(),
+      })
+      queryClient.invalidateQueries({
+        queryKey: scrapsKeys.detail(scrapId),
+      })
+      queryClient.invalidateQueries({
+        queryKey: usersKeys.details(),
+      })
+    },
+  })
+}
+
+const useUnlikeScrapMutation = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (scrapId: string) => {
+      const res = await apiClient.scraps[':scrapId'].like.$delete({
+        param: {
+          scrapId,
+        },
+      })
+
+      return await res.json()
+    },
+    onSuccess: (_, scrapId) => {
+      queryClient.invalidateQueries({
+        queryKey: scrapsKeys.lists(),
+      })
+      queryClient.invalidateQueries({
+        queryKey: scrapsKeys.detail(scrapId),
+      })
+      queryClient.invalidateQueries({
+        queryKey: usersKeys.details(),
+      })
+    },
+  })
+}
+
 export {
   useFetchScrapsOptions,
   useFetchScrapDetailOptions,
   usePostScrapMutation,
   useUpdateScrapMutation,
   useDeleteScrap,
+  useLikeScrapMutation,
+  useUnlikeScrapMutation,
 }

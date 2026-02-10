@@ -38,4 +38,14 @@ function toTags<T extends Record<PropertyKey, unknown>>(
   }
 }
 
-export { toTags }
+const toIsLiked = <T extends Record<PropertyKey, unknown>>(
+  item: T & { scrapLikes: unknown[] },
+): Omit<T, 'scrapLikes'> & { isLiked: boolean } => {
+  const { scrapLikes, ...rest } = item
+  return {
+    ...rest,
+    isLiked: scrapLikes.length > 0,
+  }
+}
+
+export { toTags, toIsLiked }

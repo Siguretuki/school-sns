@@ -49,7 +49,7 @@ export const searchRepository = {
       },
     })
   },
-  findScrapsByKeyword: async (keyword: string) => {
+  findScrapsByKeyword: async (keyword: string, userId: string) => {
     return await prisma.scraps.findMany({
       where: {
         OR: [
@@ -68,6 +68,15 @@ export const searchRepository = {
         _count: {
           select: {
             scraps: true,
+            scrapLikes: true,
+          },
+        },
+        scrapLikes: {
+          where: {
+            userId,
+          },
+          select: {
+            id: true,
           },
         },
         user: {

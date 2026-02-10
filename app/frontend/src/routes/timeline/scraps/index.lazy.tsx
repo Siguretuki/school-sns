@@ -52,7 +52,8 @@ function RouteComponent() {
                 content: d.body,
                 createdAt: d.createdAt,
                 commentCount: d._count.scraps,
-                likeCount: 0,
+                likeCount: d._count.scrapLikes,
+                isLiked: d.isLiked,
               }}
               className="hover:bg-slate-50 transition-colors"
             />

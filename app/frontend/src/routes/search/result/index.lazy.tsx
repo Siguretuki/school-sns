@@ -53,8 +53,9 @@ function RouteComponent() {
               createdAt:
                 (s as { createdAt?: string }).createdAt ??
                 new Date().toISOString(),
-              likeCount: 0,
+              likeCount: s._count.scrapLikes,
               commentCount: s._count.scraps,
+              isLiked: s.isLiked,
             }}
             owner={{
               id: s.user.id,
