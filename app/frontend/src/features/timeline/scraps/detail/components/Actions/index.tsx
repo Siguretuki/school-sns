@@ -1,4 +1,5 @@
 import { Heart, MessageSquare, Share } from 'lucide-react'
+import IconWithLabel from '@/components/ui/IconWithLabel'
 
 interface Props {
   onLike?: () => void
@@ -20,30 +21,30 @@ const Actions: React.FC<Props> = ({
       <div className="flex flex-row gap-6">
         <button
           onClick={onLike}
-          className="flex items-center gap-1.5 p-2 rounded-full hover:bg-pink-50 transition-colors group"
+          className="rounded-full hover:bg-pink-50 transition-colors group px-2 py-1 -ml-2"
         >
-          <Heart
-            className={`w-[22px] h-[22px] transition-colors ${isLiked ? 'stroke-pink-600 fill-pink-600' : 'text-slate-500 group-hover:text-pink-500'}`}
+          <IconWithLabel
+            icon={() => (
+              <Heart
+                className={`w-[22px] h-[22px] transition-colors ${isLiked ? 'stroke-pink-600 fill-pink-600' : 'text-slate-500 group-hover:text-pink-500'}`}
+              />
+            )}
+            label={likesCount > 0 ? likesCount.toString() : ''}
+            className={`gap-1.5 ${isLiked ? 'text-pink-600' : 'text-slate-500 group-hover:text-pink-500'}`}
           />
-          {likesCount > 0 && (
-            <span
-              className={`text-sm ${isLiked ? 'text-pink-600' : 'text-slate-500 group-hover:text-pink-500'}`}
-            >
-              {likesCount}
-            </span>
-          )}
         </button>
 
         <button
           onClick={onReply}
-          className="flex items-center gap-1.5 p-2 rounded-full hover:bg-sky-50 transition-colors group"
+          className="rounded-full hover:bg-sky-50 transition-colors group px-2 py-1"
         >
-          <MessageSquare className="text-slate-500 w-[22px] h-[22px] group-hover:text-sky-500" />
-          {commentsCount > 0 && (
-            <span className="text-sm text-slate-500 group-hover:text-sky-500">
-              {commentsCount}
-            </span>
-          )}
+          <IconWithLabel
+            icon={() => (
+              <MessageSquare className="text-slate-500 w-[22px] h-[22px] group-hover:text-sky-500" />
+            )}
+            label={commentsCount > 0 ? commentsCount.toString() : ''}
+            className="gap-1.5 text-slate-500 group-hover:text-sky-500"
+          />
         </button>
       </div>
 

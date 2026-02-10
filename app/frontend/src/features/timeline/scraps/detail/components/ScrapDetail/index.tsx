@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { MoreHorizontal } from 'lucide-react'
 import type { Owner } from '@/features/timeline/types'
-import Avatar from '@/components/ui/Avatar'
+import UserPreview from '@/components/ui/UserPreview'
 import EditButton from '@/features/timeline/components/EditButton'
 import MarkdownViewer from '@/features/timeline/components/MarkdownViewer'
 
@@ -23,26 +23,15 @@ const ScrapDetail: React.FC<Props> = ({ owner, scrap, isEditable }) => {
       {/* Header */}
       <div className="flex justify-between items-start mb-3">
         <div className="flex gap-3 items-center">
-          <Link
-            to="/profile/$id/$userName"
-            params={{ id: owner.id, userName: owner.name }}
-          >
-            <Avatar
-              src={owner.avatarUrl ?? undefined}
-              alt={owner.name}
-              className="w-10 h-10"
-            />
-          </Link>
-          <div className="flex flex-col leading-tight">
-            <Link
-              to="/profile/$id/$userName"
-              params={{ id: owner.id, userName: owner.name }}
-              className="font-bold text-slate-900 hover:underline"
-            >
-              {owner.name}
-            </Link>
-            <span className="text-slate-500 text-sm">@{owner.name}</span>
-          </div>
+          <UserPreview
+            id={owner.id}
+            name={owner.name}
+            avatarUrl={owner.avatarUrl}
+            classNames={{
+              avatar: 'w-10 h-10',
+              name: 'text-base font-bold text-slate-900',
+            }}
+          />
         </div>
         <div className="relative">
           {isEditable ? (
