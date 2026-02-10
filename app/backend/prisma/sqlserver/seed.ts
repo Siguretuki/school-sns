@@ -31,7 +31,7 @@ async function main() {
       },
     })
     // https://www.dicebear.com を使ってアバター画像URLを生成
-    const avatarUrl = `https://api.dicebear.com/9.x/notionists-neutral/svg?seed=${user.id}`
+    const avatarUrl = `https://api.dicebear.com/9.x/thumbs/svg?seed=${user.id}`
     const updatedUser = await prisma.users.update({
       where: { id: user.id },
       data: { avatarUrl },
@@ -66,7 +66,7 @@ async function main() {
     const seed = artifactSeeds[artifactIndex % artifactSeeds.length]
     artifactIndex++
 
-    await prisma.artifacts.create({
+    const artifact = await prisma.artifacts.create({
       data: {
         title: seed.title,
         body: seed.body,
@@ -80,6 +80,11 @@ async function main() {
           })),
         },
       },
+    })
+    // summaryByAI の更新
+    await prisma.artifacts.update({
+      where: { id: artifact.id },
+      data: { summaryByAI: seed.summaryByAI },
     })
   }
 
@@ -183,12 +188,15 @@ export interface SeedText {
   title: string
   body: string
 }
+export interface ArtifactSeed extends SeedText {
+  summaryByAI: string
+}
 export interface ScrapSeed {
   parent: SeedText
   replies: SeedText[]
 }
 
-export function getJapaneseArtifactSeeds(): SeedText[] {
+export function getJapaneseArtifactSeeds(): ArtifactSeed[] {
   return [
     // ---- IT（7）----
     {
@@ -207,11 +215,14 @@ export function getJapaneseArtifactSeeds(): SeedText[] {
         '次にやりたい：スマホの片手操作を意識したUI / 共有リンク',
         '```',
       ].join('\n'),
+      summaryByAI: [
+        '文化祭の準備を効率化するためのWebアプリ「DayClip」を開発。タスク管理、画像メモ、タグ検索などの機能を搭載し、即時反映されるUIでユーザー体験を向上。',
+      ].join(' '),
     },
     {
       title: 'スクロールで見せるポートフォリオを作って反省したこと',
       body: [
-        '「普通に並べるだけ」だと印象が薄い気がして、スクロールに合わせて演出が変わるポートフォリオにしました。',
+        '「普通に並べるだけ」だと印象が薄い気がして、スクロールに合わせて演出が変わるポートフォリオにしました.',
         '',
         'やってみて分かったのは、演出を足すほど **重さと読みやすさ** が敵になること。',
         '',
@@ -222,6 +233,9 @@ export function getJapaneseArtifactSeeds(): SeedText[] {
         '',
         'に寄せたら「見れる」感じになりました。',
       ].join('\n'),
+      summaryByAI: [
+        'スクロールに連動した演出を取り入れたポートフォリオを作成。演出の追加がパフォーマンスと可読性に与える影響を考慮し、最初のセクションに重点を置き、作品一覧では軽量化を図ることでユーザー体験を最適化。',
+      ].join(' '),
     },
     {
       title: 'QRで出欠を集計するミニシステム（試作）',
@@ -238,11 +252,14 @@ export function getJapaneseArtifactSeeds(): SeedText[] {
         '',
         'セキュリティはまだ課題で、次は“偽装”対策を考えたいです。',
       ].join('\n'),
+      summaryByAI: [
+        '授業での出席管理を効率化するために、QRコードを利用した出欠集計システムを試作。連打や通信失敗への対策を実装し、ユーザーの操作ミスを減らす工夫を行った。',
+      ].join(' '),
     },
     {
       title: '音楽の感想を共有するアプリのプロトタイプ',
       body: [
-        '聴いた曲の感想をメモるのが好きなので、共有できる形をプロトで作りました。',
+        '聴いた曲の感想をメモるのが好きなので、共有できる形をプロトで作りました.',
         '',
         '## 画面',
         '- タイムライン（投稿一覧）',
@@ -252,6 +269,9 @@ export function getJapaneseArtifactSeeds(): SeedText[] {
         '検索は同じ曲を何回も叩きがちだったので、キャッシュを入れました。',
         '「速くなった」より **落ち着く** 感覚が大きいです。',
       ].join('\n'),
+      summaryByAI: [
+        '聴いた曲の感想をメモるのが好きなので、共有できる形をプロトで作りました.',
+      ].join(' '),
     },
     {
       title: '作品展の展示マップ（スマホ向けWeb）',
@@ -265,6 +285,9 @@ export function getJapaneseArtifactSeeds(): SeedText[] {
         '小さい工夫ですが、表示がごちゃつかないように**情報を折りたたむ**前提にしてます。',
         '最初から全部見せると、見た瞬間に読む気が消えました。',
       ].join('\n'),
+      summaryByAI: [
+        '作品展で迷子が発生しがちだったので、スマホで見れる展示マップを作成。フロア選択、カテゴリ絞り込み、タップで作者コメント表示などの機能を搭載し、情報の折りたたみで見やすさを工夫した。',
+      ].join(' '),
     },
     {
       title: '画像を一括でリネームするCLIツール',
@@ -280,6 +303,9 @@ export function getJapaneseArtifactSeeds(): SeedText[] {
         '',
         '便利より **壊さない** の方が価値が高いと学びました。',
       ].join('\n'),
+      summaryByAI: [
+        '写真フォルダがカオスになりがちなので、まとめてリネームするCLIを作成。破壊的な操作を避けるためにdry-runを必須とし、失敗したファイルのみログに残す工夫を行った。',
+      ].join(' '),
     },
     {
       title: '課題の締切と提出リンクをまとめるページ',
@@ -292,6 +318,9 @@ export function getJapaneseArtifactSeeds(): SeedText[] {
         '',
         '「カレンダーでよくない？」とも思ったけど、提出リンクが迷子にならないのが助かってます。',
       ].join('\n'),
+      summaryByAI: [
+        '締切が重なると忘れがちな課題の管理を効率化するため、締切順に表示し遅延をラベルで明示、提出リンクも一緒に配置した一覧ページを作成。カレンダーよりも提出リンクの管理がしやすい点が利点。',
+      ].join(' '),
     },
 
     // ---- CG / イラスト（7）----
@@ -309,6 +338,9 @@ export function getJapaneseArtifactSeeds(): SeedText[] {
         '',
         '次は塗りを変えて、厚塗り寄りにも挑戦したいです。',
       ].join('\n'),
+      summaryByAI: [
+        '立ち絵を完成させたあと、表情差分を追加。目と口だけでなく眉と頬の形も調整することで自然な表情を実現。喜怒哀楽や困り、焦り、照れ、無表情など多様な表情を作成し、次は塗りのスタイルにも挑戦予定。',
+      ].join(' '),
     },
     {
       title: '背景イラスト：雨上がりの駅前（反射がむずい）',
@@ -323,6 +355,9 @@ export function getJapaneseArtifactSeeds(): SeedText[] {
         '- 人影は形で置く（描き込みすぎない）',
         '- 看板の光は少し滲ませる',
       ].join('\n'),
+      summaryByAI: [
+        '雨上がりの反射を描く際に、鏡のように全てを描くと汚くなるため、情報を間引いた別世界として表現。反射の色数を抑え、人影は形で表現し、看板の光は少し滲ませるなどの自分ルールを設定してまとまりを持たせた。',
+      ].join(' '),
     },
     {
       title: '低ポリ背景：部屋を作って“配置”の大事さを知った',
@@ -334,6 +369,9 @@ export function getJapaneseArtifactSeeds(): SeedText[] {
         '',
         '作ったもの：机 / 椅子 / PC / 本棚 / 小物',
       ].join('\n'),
+      summaryByAI: [
+        'ゲーム背景を想定して低ポリで部屋を作成。ディテールよりも配置の重要性を実感し、生活感の流れを意識して小物を配置することで説得力を持たせた。',
+      ].join(' '),
     },
     {
       title: 'モデリング練習：古いラジオ（角処理が地獄）',
@@ -345,6 +383,9 @@ export function getJapaneseArtifactSeeds(): SeedText[] {
         '',
         '素材感（プラ/金属）で“丸さ”を変えると説得力が出ました。',
       ].join('\n'),
+      summaryByAI: [
+        'ハードサーフェスの練習で古いラジオを作成。角の丸め具合を調整し、素材感に応じて丸さを変えることで説得力を持たせた。',
+      ].join(' '),
     },
     {
       title: '2秒ループ映像を作った（つなぎ目を消すコツ）',
@@ -358,6 +399,9 @@ export function getJapaneseArtifactSeeds(): SeedText[] {
         '',
         'を揃える方が自然に見えました。',
       ].join('\n'),
+      summaryByAI: [
+        '短いループ映像を作成。つなぎ目を自然に見せるために、位置合わせよりも動きの方向、明るさの変化、視線誘導を揃える工夫を行った。',
+      ].join(' '),
     },
     {
       title: '石畳テクスチャ：ノイズより“欠けの理由”が効く',
@@ -369,6 +413,9 @@ export function getJapaneseArtifactSeeds(): SeedText[] {
         '',
         '次は木材で同じことをやります。',
       ].join('\n'),
+      summaryByAI: [
+        '質感作りの練習で石畳テクスチャを作成。ノイズを足すだけではリアルにならず、ひび割れや欠けに方向と理由を持たせることでリアリティを向上。次は木材で同様の手法を試す予定。',
+      ].join(' '),
     },
     {
       title: '同人ゲーム用のUIパーツを先に整えた（ボタン/アイコン）',
@@ -381,6 +428,9 @@ export function getJapaneseArtifactSeeds(): SeedText[] {
         '',
         'アイコンは細かく描くほど読めないので、**シルエット重視**にしました。',
       ].join('\n'),
+      summaryByAI: [
+        '同人ゲームのUIパーツ（ボタン、タブ、ダイアログ、アイコン）を先に作成。アイコンは細かく描くよりもシルエット重視でデザインし、全体の品質向上を図った。',
+      ].join(' '),
     },
 
     // ---- ゲーム制作（6）----
@@ -395,6 +445,9 @@ export function getJapaneseArtifactSeeds(): SeedText[] {
         '',
         '物理が正しいかより、**入力に対して返事があるか**が大事だと感じました。',
       ].join('\n'),
+      summaryByAI: [
+        'ステージより先に「触って気持ちいい移動」を作成。加速/減速、ジャンプの高さ調整、着地の硬さなど、物理的な正確さよりも入力に対するフィードバックを重視した。',
+      ].join(' '),
     },
     {
       title: '1画面パズル：20ステージ作って友達にテストしてもらった',
@@ -413,6 +466,9 @@ export function getJapaneseArtifactSeeds(): SeedText[] {
         '',
         'テストは地味だけど、ゲームが一気に良くなりました。',
       ].join('\n'),
+      summaryByAI: [
+        'ゲーム制作において、友達にテストプレイしてもらいフィードバックを基に改善。ルール説明の簡素化、失敗時の原因表示、クリア時の効果音追加など、ユーザー体験を向上させた。',
+      ].join(' '),
     },
     {
       title: 'ホラー：暗闇探索の“音”だけ先に作ると強い',
@@ -425,6 +481,9 @@ export function getJapaneseArtifactSeeds(): SeedText[] {
         '',
         '音で情報を出しすぎると楽になりすぎるので、今は“最低限のヒント”にしています。',
       ].join('\n'),
+      summaryByAI: [
+        'ホラーゲーム制作において、グラフィックより先に音響を重視。足音、遠くの音、近づく気配など、最低限のヒントを提供することで緊張感を維持。',
+      ].join(' '),
     },
     {
       title: '会話ADV：ログ/選択肢/オートを実装した（地味に重要）',
@@ -437,6 +496,9 @@ export function getJapaneseArtifactSeeds(): SeedText[] {
         '',
         '一番大事だと思ったのは、**今どのモードか**を分かりやすく見せることでした。',
       ].join('\n'),
+      summaryByAI: [
+        'アドベンチャーゲームの基礎UIを作成。ログ、選択肢、オート/スキップ機能を実装し、ユーザーが現在のモードを分かりやすく把握できるように工夫した。',
+      ].join(' '),
     },
     {
       title: 'ドット絵キャラ：歩行アニメ作った（斜めが難しい）',
@@ -446,6 +508,9 @@ export function getJapaneseArtifactSeeds(): SeedText[] {
         '斜め方向が特に破綻しやすくて、情報量を減らすと安定しました。',
         '腕の振りは大げさな方が読みやすいです。',
       ].join('\n'),
+      summaryByAI: [
+        'ドット絵でキャラクターを自作し、歩行アニメーションを制作。特に斜め方向の表現が難しく、情報量を減らすことで安定させ、腕の振りを大げさにすることで読みやすさを向上させた。',
+      ].join(' '),
     },
     {
       title: '短いチュートリアルだけ作る練習（説明なしで伝える）',
@@ -462,6 +527,9 @@ export function getJapaneseArtifactSeeds(): SeedText[] {
         '',
         '説明なしでもだいたい伝わったので嬉しい。',
       ].join('\n'),
+      summaryByAI: [
+        'レベルデザインの練習として、最初の1分間のチュートリアルを作成。説明文を使わず視線誘導で教える方針を採用し、失敗から学べる穴や安全な場所で試せる床ギミックを配置することで、プレイヤーに自然にゲームのルールを理解させることに成功。',
+      ].join(' '),
     },
   ]
 }
