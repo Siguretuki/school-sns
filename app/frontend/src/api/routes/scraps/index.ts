@@ -124,7 +124,7 @@ const useDeleteScrap = (id: string) => {
   })
 }
 
-const useLikeScrapMutation = () => {
+const useLikeScrapMutation = (parentId?: string) => {
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -150,11 +150,17 @@ const useLikeScrapMutation = () => {
       queryClient.invalidateQueries({
         queryKey: usersKeys.details(),
       })
+
+      if (parentId) {
+        queryClient.invalidateQueries({
+          queryKey: scrapsKeys.detail(parentId),
+        })
+      }
     },
   })
 }
 
-const useUnlikeScrapMutation = () => {
+const useUnlikeScrapMutation = (parentId?: string) => {
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -177,6 +183,12 @@ const useUnlikeScrapMutation = () => {
       queryClient.invalidateQueries({
         queryKey: usersKeys.details(),
       })
+
+      if (parentId) {
+        queryClient.invalidateQueries({
+          queryKey: scrapsKeys.detail(parentId),
+        })
+      }
     },
   })
 }

@@ -8,11 +8,12 @@ import { cn } from '@/utils/cn'
 interface Props {
   isLiked: boolean
   scrapId: string
+  parentId?: string
 }
 
-const LikeButton: React.FC<Props> = ({ isLiked, scrapId }) => {
-  const likeMutation = useLikeScrapMutation()
-  const unlikeMutation = useUnlikeScrapMutation()
+const LikeButton: React.FC<Props> = ({ isLiked, scrapId, parentId }) => {
+  const likeMutation = useLikeScrapMutation(parentId)
+  const unlikeMutation = useUnlikeScrapMutation(parentId)
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()

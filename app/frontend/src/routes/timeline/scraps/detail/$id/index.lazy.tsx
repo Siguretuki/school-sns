@@ -32,7 +32,6 @@ function RouteComponent() {
           }}
           scrap={{
             id: rootScrap.id,
-            title: rootScrap.title,
             body: rootScrap.body,
             createdAt: rootScrap.createdAt,
             updatedAt: rootScrap.updatedAt,
@@ -62,6 +61,7 @@ function RouteComponent() {
               likeCount: r._count.scrapLikes,
               commentCount: r._count.scraps,
               isLiked: r.isLiked,
+              parentId: rootScrap.id,
             }}
             className="px-4 py-3 rounded-lg shadow-sm gap-3"
           />

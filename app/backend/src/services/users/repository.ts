@@ -96,7 +96,6 @@ export const usersRepository = {
                 select: {
                   id: true,
                   body: true,
-                  title: true,
                   createdAt: true,
                   updatedAt: true,
                   _count: {

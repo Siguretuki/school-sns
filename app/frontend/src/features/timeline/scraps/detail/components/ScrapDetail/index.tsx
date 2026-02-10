@@ -8,7 +8,6 @@ interface Props {
   owner: Owner
   scrap: {
     id: string
-    title: string
     body: string
     createdAt: string
     updatedAt: string
@@ -19,7 +18,6 @@ interface Props {
 const ScrapDetail: React.FC<Props> = ({ owner, scrap, isEditable }) => {
   return (
     <div className="flex flex-col gap-2 px-2 py-3 bg-slate-50">
-      <h3 className="text-2xl font-bold">{scrap.title}</h3>
       <div className="flex justify-between items-center">
         <div className="flex flex-col gap-1">
           <UserPreview

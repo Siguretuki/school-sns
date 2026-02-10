@@ -11,7 +11,6 @@ import type { EditUserInfo } from './type.js'
 
 const userScrapSchema = z.object({
   id: z.string(),
-  title: z.string(),
   body: z.string(),
   createdAt: z.union([z.string(), z.date()]),
   updatedAt: z.union([z.string(), z.date()]),

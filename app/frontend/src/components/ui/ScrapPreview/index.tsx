@@ -18,6 +18,7 @@ interface Props {
     isLiked: boolean
     commentCount: number
     likeCount: number
+    parentId?: string
   }
   className?: string
 }
@@ -75,7 +76,11 @@ const ScrapPreview: React.FC<Props> = ({ owner, scrap, className }) => {
           <IconWithLabel
             className="gap-1.5 group/heart"
             icon={() => (
-              <LikeButton isLiked={scrap.isLiked} scrapId={scrap.id} />
+              <LikeButton
+                isLiked={scrap.isLiked}
+                scrapId={scrap.id}
+                parentId={scrap.parentId}
+              />
             )}
             label={() => (
               <span className="text-sm font-medium text-slate-500 group-hover/heart:text-pink-500 transition-colors">
