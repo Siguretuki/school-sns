@@ -51,8 +51,8 @@ function RouteComponent() {
                 id: d.id,
                 content: d.body,
                 createdAt: d.createdAt,
-                commentCount: 0, // TODO: Fetch from API
-                likeCount: 0, // TODO: Fetch from API
+                commentCount: d._count.scraps,
+                likeCount: 0,
               }}
               className="hover:bg-slate-50 transition-colors"
             />

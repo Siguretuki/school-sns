@@ -23,7 +23,7 @@ export const Route = createLazyFileRoute('/profile/$id/$userName/')({
 
 const tabLabels: Record<ProfileTab, string> = {
   artifacts: 'Artifacts',
-  scraps: 'Scraps',
+  scraps: 'Posts',
 }
 
 function RouteComponent() {
