@@ -18,7 +18,6 @@ describe('ScrapsService', () => {
       // ルート要素 (parentId: null)
       await prisma.scraps.create({
         data: {
-          title: 'Root Scrap',
           body: 'Root Scrap',
           userId: user.id,
           parentId: null,
@@ -27,14 +26,12 @@ describe('ScrapsService', () => {
       // 子要素
       const parent = await prisma.scraps.create({
         data: {
-          title: 'Parent',
           body: 'Parent',
           userId: user.id,
         },
       })
       await prisma.scraps.create({
         data: {
-          title: 'Child Scrap',
           body: 'Child Scrap',
           userId: user.id,
           parentId: parent.id,
@@ -64,7 +61,6 @@ describe('ScrapsService', () => {
       // ターゲットタグを持つスクラップ
       await prisma.scraps.create({
         data: {
-          title: 'Target Scrap',
           body: 'Target Scrap',
           userId: user.id,
           tagScraps: { create: { tagId: tag.id } },
@@ -74,7 +70,6 @@ describe('ScrapsService', () => {
       // 別のタグを持つスクラップ
       await prisma.scraps.create({
         data: {
-          title: 'Other Scrap',
           body: 'Body',
           userId: user.id,
           tagScraps: { create: { tagId: otherTag.id } },
@@ -107,7 +102,6 @@ describe('ScrapsService', () => {
       // フォローしているユーザーのスクラップ
       await prisma.scraps.create({
         data: {
-          title: 'Followee Scrap',
           body: '.',
           userId: followee.id,
         },
@@ -116,7 +110,6 @@ describe('ScrapsService', () => {
       // フォローしていないユーザーのスクラップ
       await prisma.scraps.create({
         data: {
-          title: 'Stranger Scrap',
           body: '.',
           userId: stranger.id,
         },
@@ -140,7 +133,6 @@ describe('ScrapsService', () => {
       const user = await createTestUser()
       const scrap = await prisma.scraps.create({
         data: {
-          title: 'Detail Scrap',
           body: 'Body',
           userId: user.id,
         },
@@ -170,7 +162,6 @@ describe('ScrapsService', () => {
     it('SCRAPS_SERVICE_006: 必須項目のみでスクラップが新規作成されること', async () => {
       const user = await createTestUser()
       const input = {
-        title: 'New Scrap',
         body: 'New Body',
         userId: user.id,
         parentId: null,
@@ -180,7 +171,7 @@ describe('ScrapsService', () => {
 
       expect(result.type).toBe('Success')
       if (result.type === 'Success') {
-        expect(result.value.title).toBe(input.title)
+        expect(result.value.body).toBe(input.body)
         expect(result.value.id).toBeDefined()
       }
     })
@@ -191,7 +182,6 @@ describe('ScrapsService', () => {
       const tag = await prisma.tags.create({ data: { name: 'Tag1' } })
 
       const input = {
-        title: 'Tagged Scrap',
         body: 'Body',
         userId: user.id,
         parentId: null,
@@ -216,7 +206,6 @@ describe('ScrapsService', () => {
     it('SCRAPS_SERVICE_008: 存在しないタグIDを指定した場合にTagNotFoundErrorが返ること', async () => {
       const user = await createTestUser()
       const input = {
-        title: 'Fail Scrap',
         body: 'Body',
         userId: user.id,
         parentId: null,
@@ -239,15 +228,12 @@ describe('ScrapsService', () => {
       const user = await createTestUser()
       const scrap = await prisma.scraps.create({
         data: {
-          title: 'Old Title',
           body: 'Old Body',
           userId: user.id,
         },
       })
 
-      const updateContent = {
-        title: 'New Title',
-      }
+      const updateContent = { body: 'New Body' }
 
       const result = await scrapsService.updateScrap(
         scrap.id,
@@ -259,7 +245,7 @@ describe('ScrapsService', () => {
       const updated = await prisma.scraps.findUnique({
         where: { id: scrap.id },
       })
-      expect(updated?.title).toBe('New Title')
+      expect(updated?.body).toBe('New Body')
     })
 
     // スクラップのタグ情報の更新（付け替え）ができるか検証
@@ -270,7 +256,6 @@ describe('ScrapsService', () => {
 
       const scrap = await prisma.scraps.create({
         data: {
-          title: 'Scrap',
           body: 'Body',
           userId: user.id,
           tagScraps: { create: { tagId: tag1.id } },
@@ -306,15 +291,12 @@ describe('ScrapsService', () => {
       const otherUser = await createTestUser()
       const scrap = await prisma.scraps.create({
         data: {
-          title: 'Owner Scrap',
           body: 'Body',
           userId: owner.id,
         },
       })
 
-      const result = await scrapsService.updateScrap(scrap.id, otherUser.id, {
-        title: 'Hacked',
-      })
+      const result = await scrapsService.updateScrap(scrap.id, otherUser.id, {})
 
       expect(result.type).toBe('Failure')
       if (result.type === 'Failure') {
@@ -329,7 +311,6 @@ describe('ScrapsService', () => {
       const user = await createTestUser()
       const scrap = await prisma.scraps.create({
         data: {
-          title: 'To Delete',
           body: 'Body',
           userId: user.id,
         },
@@ -350,7 +331,6 @@ describe('ScrapsService', () => {
       const otherUser = await createTestUser()
       const scrap = await prisma.scraps.create({
         data: {
-          title: 'Owner Scrap',
           body: 'Body',
           userId: owner.id,
         },

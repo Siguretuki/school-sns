@@ -96,7 +96,6 @@ async function main() {
     // 親スクラップの作成
     const parentScrap = await prisma.scraps.create({
       data: {
-        title: seed.parent.title,
         body: seed.parent.body,
         userId: user.id,
         tagScraps: {
@@ -122,7 +121,6 @@ async function main() {
       const replyUser = users[Math.floor(Math.random() * users.length)]
       await prisma.scraps.create({
         data: {
-          title: reply.title,
           body: reply.body,
           userId: replyUser.id,
           parentId: parentScrap.id,

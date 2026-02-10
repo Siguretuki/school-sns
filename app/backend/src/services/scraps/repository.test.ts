@@ -41,13 +41,11 @@ describe('ScrapsRepository', () => {
     it('SCRAP_REPO_003: 条件なしですべてのスクラップを取得できること', async () => {
       const user = await createTestUser()
       await repo.addScrap({
-        title: 'S1',
         body: 'B1',
         userId: user.id,
         parentId: null,
       })
       await repo.addScrap({
-        title: 'S2',
         body: 'B2',
         userId: user.id,
         parentId: null,
@@ -60,7 +58,6 @@ describe('ScrapsRepository', () => {
       const user = await createTestUser()
       for (let i = 1; i <= 3; i++) {
         await repo.addScrap({
-          title: `Scrap ${i.toString()}`,
           body: '...',
           userId: user.id,
           parentId: null,
@@ -85,19 +82,16 @@ describe('ScrapsRepository', () => {
     it('SCRAP_REPO_005: 指定した複数のIDに一致するスクラップのみを取得できること', async () => {
       const user = await createTestUser()
       const s1 = await repo.addScrap({
-        title: 'S1',
         body: 'B1',
         userId: user.id,
         parentId: null,
       })
       const s2 = await repo.addScrap({
-        title: 'S2',
         body: 'B2',
         userId: user.id,
         parentId: null,
       })
       await repo.addScrap({
-        title: 'S3',
         body: 'B3',
         userId: user.id,
         parentId: null,
@@ -118,7 +112,6 @@ describe('ScrapsRepository', () => {
     it('SCRAP_REPO_006: 指定したIDに一致するスクラップを1件取得できること', async () => {
       const user = await createTestUser()
       const created = await repo.addScrap({
-        title: 'T',
         body: 'B',
         userId: user.id,
         parentId: null,
@@ -138,13 +131,12 @@ describe('ScrapsRepository', () => {
     it('SCRAP_REPO_008: 正しい入力値で新しいスクラップが作成されること', async () => {
       const user = await createTestUser()
       const data = {
-        title: 'New',
         body: 'Content',
         userId: user.id,
         parentId: null,
       }
       const created = await repo.addScrap(data)
-      expect(created.title).toBe('New')
+      expect(created.body).toBe('Content')
     })
   })
 
@@ -153,13 +145,12 @@ describe('ScrapsRepository', () => {
     it('SCRAP_REPO_009: 指定したIDのスクラップの内容を更新できること', async () => {
       const user = await createTestUser()
       const s = await repo.addScrap({
-        title: 'Old',
         body: 'Old',
         userId: user.id,
         parentId: null,
       })
-      const updated = await repo.updateScrap(s.id, { title: 'Updated' })
-      expect(updated.title).toBe('Updated')
+      const updated = await repo.updateScrap(s.id, { body: 'Updated' })
+      expect(updated.body).toBe('Updated')
     })
   })
 
@@ -168,7 +159,6 @@ describe('ScrapsRepository', () => {
     it('SCRAP_REPO_010: スクラップの所有者が一致する場合にtrueを返すこと', async () => {
       const user = await createTestUser()
       const s = await repo.addScrap({
-        title: 'T',
         body: 'B',
         userId: user.id,
         parentId: null,
@@ -180,7 +170,6 @@ describe('ScrapsRepository', () => {
       const owner = await createTestUser()
       const other = await createTestUser()
       const s = await repo.addScrap({
-        title: 'T',
         body: 'B',
         userId: owner.id,
         parentId: null,
@@ -194,7 +183,6 @@ describe('ScrapsRepository', () => {
     it('SCRAP_REPO_012: スクラップに複数のタグを新規登録できること', async () => {
       const user = await createTestUser()
       const s = await repo.addScrap({
-        title: 'T',
         body: 'B',
         userId: user.id,
         parentId: null,
@@ -213,7 +201,6 @@ describe('ScrapsRepository', () => {
     it('SCRAP_REPO_013: 既存のタグを新しいタグリストで同期（追加・削除）できること', async () => {
       const user = await createTestUser()
       const s = await repo.addScrap({
-        title: 'T',
         body: 'B',
         userId: user.id,
         parentId: null,
@@ -237,7 +224,6 @@ describe('ScrapsRepository', () => {
     it('SCRAP_REPO_014: タグリストを空にして更新した際に関連する全タグが削除されること', async () => {
       const user = await createTestUser()
       const s = await repo.addScrap({
-        title: 'T',
         body: 'B',
         userId: user.id,
         parentId: null,
@@ -256,7 +242,6 @@ describe('ScrapsRepository', () => {
     it('SCRAP_REPO_015: スクラップが削除され関連するタグ情報も削除されること', async () => {
       const user = await createTestUser()
       const s = await repo.addScrap({
-        title: 'T',
         body: 'B',
         userId: user.id,
         parentId: null,
@@ -272,13 +257,11 @@ describe('ScrapsRepository', () => {
     it('SCRAP_REPO_016: 削除時に子スクラップのparentIdがnullに更新されること', async () => {
       const user = await createTestUser()
       const parent = await repo.addScrap({
-        title: 'P',
         body: 'B',
         userId: user.id,
         parentId: null,
       })
       const child = await repo.addScrap({
-        title: 'C',
         body: 'B',
         userId: user.id,
         parentId: parent.id,
@@ -296,7 +279,6 @@ describe('ScrapsRepository', () => {
     it('SCRAP_REPO_017: 指定した複数のタグIDを持つスクラップのIDリストを取得できること', async () => {
       const user = await createTestUser()
       const s1 = await repo.addScrap({
-        title: 'S1',
         body: 'B',
         userId: user.id,
         parentId: null,

@@ -4,7 +4,6 @@ const scrapSchema = z.object({
   id: z.string(),
   userId: z.string(),
   parentId: z.string().nullable(),
-  title: z.string().min(1),
   body: z.string(),
   createdAt: z.coerce.string(),
   updatedAt: z.coerce.string(),
@@ -12,13 +11,11 @@ const scrapSchema = z.object({
 
 const registerScrapSchema = z.object({
   parentId: z.string().nullable().default(null),
-  title: z.string().min(1),
   body: z.string(),
   tagIds: z.array(z.string()).optional(),
 })
 
 const updateScrapSchema = z.object({
-  title: z.string().min(1).optional(),
   body: z.string().optional(),
   tagIds: z.array(z.string()).optional(),
 })

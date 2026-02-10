@@ -14,7 +14,7 @@ export const searchService = {
       scrap: async () =>
         (await searchRepository.findScrapsByKeyword(keyword)).map((s) => ({
           id: s.id,
-          entityName: s.title,
+          entityName: s.body,
         })),
       user: async () =>
         (await searchRepository.findUsersByKeyword(keyword)).map((u) => ({

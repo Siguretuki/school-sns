@@ -160,7 +160,6 @@ export const scraps = new Hono()
         scrapId,
         userId,
         {
-          title: date.title,
           body: date.body,
         },
         date.tagIds,
