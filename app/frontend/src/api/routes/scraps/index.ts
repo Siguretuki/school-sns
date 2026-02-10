@@ -12,6 +12,7 @@ import { scrapsKeys } from '@/api/routes/scraps/key'
 import { apiClient } from '@/api/shared/apiClient'
 import { convertQueryParams } from '@/api/shared/convertQueryParams'
 import { parseApiError } from '@/api/shared/error'
+import { usersKeys } from '@/api/routes/users/key'
 
 const useFetchScrapsOptions = (query?: GetScrapsQuerySchema) =>
   queryOptions({
@@ -146,6 +147,9 @@ const useLikeScrapMutation = () => {
       queryClient.invalidateQueries({
         queryKey: scrapsKeys.detail(scrapId),
       })
+      queryClient.invalidateQueries({
+        queryKey: usersKeys.details(),
+      })
     },
   })
 }
@@ -169,6 +173,9 @@ const useUnlikeScrapMutation = () => {
       })
       queryClient.invalidateQueries({
         queryKey: scrapsKeys.detail(scrapId),
+      })
+      queryClient.invalidateQueries({
+        queryKey: usersKeys.details(),
       })
     },
   })

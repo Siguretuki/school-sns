@@ -40,9 +40,10 @@ function RouteComponent() {
           isEditable={userId === rootScrap.user.id}
         />
         <Actions
-          likesCount={0}
+          likesCount={rootScrap._count.scrapLikes}
           commentsCount={replies.length}
           targetId={rootScrap.id}
+          isLiked={rootScrap.isLiked}
         />
       </div>
       <div className="flex flex-col gap-3 px-2">
