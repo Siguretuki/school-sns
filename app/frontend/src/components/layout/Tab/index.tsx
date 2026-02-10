@@ -13,7 +13,7 @@ const Tab: React.FC<Props> & { Item: typeof TabItem } = ({
   return (
     <div
       className={cn(
-        'flex overflow-y-auto border-b border-slate-500 p-0 bg-slate-50 scrollbar-hidden',
+        'flex overflow-y-auto border-b border-slate-200 bg-white scrollbar-hidden',
         className,
       )}
     >

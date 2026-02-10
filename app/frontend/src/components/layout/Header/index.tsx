@@ -12,6 +12,8 @@ type TitlePath = Extract<
   | '/timeline/artifacts'
   | '/settings'
   | '/search'
+  | '/timeline/scraps/create'
+  | '/timeline/artifacts/create'
 >
 
 interface PathWithTitle {
@@ -25,6 +27,8 @@ const HeaderTitles: Array<PathWithTitle> = [
   { path: '/timeline/artifacts', title: '記事' },
   { path: '/settings', title: '設定' },
   { path: '/search', title: '検索' },
+  { path: '/timeline/scraps/create', title: 'Scrap　新規投稿' },
+  { path: '/timeline/artifacts/create', title: 'Artifact　新規投稿' },
 ]
 
 export default function Header() {

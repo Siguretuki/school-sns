@@ -1,4 +1,6 @@
 import { Globe, Pencil } from 'lucide-react'
+import { useCreateBlockNote } from '@blocknote/react'
+import { ja } from '@blocknote/core/locales'
 import type { useArtifactForm } from '@/features/timeline/artifacts/hooks/useArtifactForm'
 import type { Tag } from '@/features/timeline/types'
 import type React from 'react'
@@ -13,6 +15,11 @@ interface Props {
 }
 
 const ArtifactEditor: React.FC<Props> = ({ form, tags }) => {
+  const bodyEditor = useCreateBlockNote({
+    dictionary: ja,
+    placeholder: 'テキストを入力してください',
+  })
+
   return (
     <form
       onSubmit={(e) => {
@@ -26,7 +33,7 @@ const ArtifactEditor: React.FC<Props> = ({ form, tags }) => {
         {(field) => (
           <div className="w-full flex flex-col gap-1">
             <label htmlFor={field.name} className="text-lg font-medium">
-              Title
+              タイトル
             </label>
             <input
               id={field.name}
@@ -40,21 +47,23 @@ const ArtifactEditor: React.FC<Props> = ({ form, tags }) => {
           </div>
         )}
       </form.Field>
-      <form.Field name="body">
-        {(field) => (
-          <div className="w-full flex flex-col gap-1 flex-1">
-            <label htmlFor={field.name} className="text-lg font-medium">
-              Body
-            </label>
+      <div className="w-full flex flex-col gap-1">
+        <div className="text-lg font-medium">Body</div>
+        <form.Field name="body">
+          {(field) => (
             <Editor
               id={field.name}
               initialContent={field.state.value}
               onChange={(content) => field.handleChange(content)}
-              className="max-h-full overflow-y-auto"
+              editor={bodyEditor}
+              staticFormattingToolbar
+              sideMenu={false}
+              slashMenu={true}
+              className="overflow-y-auto"
             />
-          </div>
-        )}
-      </form.Field>
+          )}
+        </form.Field>
+      </div>
       <form.Field mode="array" name="tags">
         {(field) => (
           <div className="w-full flex flex-col gap-1">

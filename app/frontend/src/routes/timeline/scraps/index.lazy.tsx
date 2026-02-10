@@ -1,8 +1,8 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { Link, createLazyFileRoute } from '@tanstack/react-router'
 import { useFetchScrapsOptions } from '@/api/routes/scraps'
-import FilterTag from '@/components/ui/FilterTag'
 import ScrapPreview from '@/components/ui/ScrapPreview'
+import StickyFilterBar from '@/components/layout/StickyFilterBar'
 import { FILTERS, FILTER_LABELS } from '@/features/timeline/scraps/constants'
 import Popover from '@/components/layout/Popover'
 import NewPostButton from '@/features/timeline/components/NewPostButton'
@@ -15,23 +15,25 @@ function RouteComponent() {
   const { isFollowing } = Route.useLoaderDeps()
   const { data } = useSuspenseQuery(useFetchScrapsOptions({ isFollowing }))
   const { filter } = Route.useSearch()
-  const navigate = Route.useNavigate()
 
   return (
-    <div className="flex flex-col gap-3 w-full">
-      <div className="flex gap-3 p-3 border-b border-b-slate-200 overflow-x-auto">
+    <div className="w-full">
+      <StickyFilterBar>
         {FILTERS.map((f) => (
-          <FilterTag
+          <Link
             key={f}
-            label={FILTER_LABELS[f]}
-            isSelected={filter === f}
-            onClick={() => {
-              navigate({ search: (s) => ({ ...s, filter: f }) })
-            }}
-          />
+            to="."
+            search={(s) => ({ ...s, filter: f })}
+            className="shrink-0"
+          >
+            <StickyFilterBar.Tag
+              label={FILTER_LABELS[f]}
+              isSelected={filter === f}
+            />
+          </Link>
         ))}
-      </div>
-      <div className="flex flex-col gap-3 px-2 py-4">
+      </StickyFilterBar>
+      <div className="flex flex-col gap-3 px-2 mt-3">
         {data
           .sort(
             (a, b) =>
@@ -48,8 +50,11 @@ function RouteComponent() {
               scrap={{
                 id: d.id,
                 content: d.body,
+                createdAt: d.createdAt,
+                commentCount: 0, // TODO: Fetch from API
+                likeCount: 0, // TODO: Fetch from API
               }}
-              className="px-4 py-3 rounded-lg shadow-sm gap-3"
+              className="hover:bg-slate-50 transition-colors"
             />
           ))}
       </div>
