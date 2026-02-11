@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { MoreHorizontal } from 'lucide-react'
 import type { Owner } from '@/features/timeline/types'
+import { cn } from '@/utils/cn'
 import UserPreview from '@/components/ui/UserPreview'
 import EditButton from '@/features/timeline/components/EditButton'
 import MarkdownViewer from '@/features/timeline/components/MarkdownViewer'
@@ -19,9 +20,13 @@ interface Props {
 
 const ScrapDetail: React.FC<Props> = ({ owner, scrap, isEditable }) => {
   return (
-    <div className="flex flex-col px-4 pt-4 pb-2 bg-white rounded-t-xl border-b border-slate-100">
+    <div
+      className={cn(
+        'flex flex-col gap-4 px-4 pt-4 pb-2 bg-white rounded-t-xl border-b border-slate-100',
+      )}
+    >
       {/* Header */}
-      <div className="flex justify-between items-start mb-3">
+      <div className="flex justify-between items-start">
         <div className="flex gap-3 items-center">
           <UserPreview
             id={owner.id}
@@ -47,9 +52,9 @@ const ScrapDetail: React.FC<Props> = ({ owner, scrap, isEditable }) => {
       </div>
 
       {/* Content */}
-      <div className="mb-4">
+      <div className="flex flex-col gap-3">
         {/* Title as part of content flow, emphasized */}
-        <h1 className="text-xl font-bold mb-3 text-slate-900">{scrap.title}</h1>
+        <h1 className="text-xl font-bold text-slate-900">{scrap.title}</h1>
         <MarkdownViewer
           mdSource={scrap.body}
           className="text-lg text-slate-800 whitespace-pre-wrap wrap-break-words leading-relaxed"

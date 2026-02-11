@@ -22,7 +22,7 @@ function RouteComponent() {
   } = useSuspenseQuery(useFetchScrapDetailOptions(params.id))
 
   return (
-    <div className="flex flex-col pb-20">
+    <div className="flex flex-col">
       <div className="flex flex-col bg-white">
         <ScrapDetail
           owner={{
