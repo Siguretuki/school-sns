@@ -80,40 +80,49 @@ export const usersRepository = {
     return followees.map((relation) => relation.followee)
   },
   getContentsByUserId: async (
-    userId: string,
+    targetUserId: string,
+    accessUserId: string,
     options?: {
       type?: 'scraps' | 'artifacts'
       onlyPublished?: boolean
     },
   ) => {
     return await prisma.users.findFirst({
-      where: { id: userId },
+      where: { id: targetUserId },
       select: {
         scraps:
           options?.type === undefined || options.type === 'scraps'
             ? {
                 select: {
                   id: true,
-                  title: true,
+                  body: true,
                   createdAt: true,
+                  updatedAt: true,
+                  _count: {
+                    select: {
+                      scraps: true,
+                      scrapLikes: true,
+                    },
+                  },
+                  scrapLikes: {
+                    where: {
+                      userId: accessUserId,
+                    },
+                    select: {
+                      id: true,
+                    },
+                  },
+                  user: {
+                    select: {
+                      id: true,
+                      userName: true,
+                      avatarUrl: true,
+                    },
+                  },
                 },
               }
             : undefined,
-        artifacts:
-          options?.type === undefined || options.type === 'artifacts'
-            ? {
-                where: options?.onlyPublished
-                  ? {
-                      publishedAt: { not: null },
-                    }
-                  : undefined,
-                select: {
-                  id: true,
-                  title: true,
-                  publishedAt: true,
-                },
-              }
-            : undefined,
+        artifacts: options?.type === undefined || options.type === 'artifacts',
       },
     })
   },

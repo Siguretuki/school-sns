@@ -30,7 +30,7 @@ const UserOverview: React.FC<Props> = ({
             <Avatar
               src={avatarUrl ?? undefined}
               alt={userName}
-              className="h-20 w-20 border-2 border-white"
+              className="h-18 w-18 border-2 border-white bg-slate-50 m-0.5 rounded-full"
             />
           </div>
         </div>

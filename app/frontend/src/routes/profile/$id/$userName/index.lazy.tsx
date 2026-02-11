@@ -23,7 +23,7 @@ export const Route = createLazyFileRoute('/profile/$id/$userName/')({
 
 const tabLabels: Record<ProfileTab, string> = {
   artifacts: 'Artifacts',
-  scraps: 'Scraps',
+  scraps: 'Posts',
 }
 
 function RouteComponent() {
@@ -51,14 +51,6 @@ function RouteComponent() {
   const handleShare = useShareProfile(userInfo.userName)
 
   const displayContents = (): React.ReactNode => {
-    if (contents === null) {
-      return (
-        <div className="text-center text-slate-500">
-          ここにはまだ何もありません。
-        </div>
-      )
-    }
-
     switch (search.contentsType) {
       case 'artifacts':
         return contents.artifacts.map((a) => (
@@ -73,6 +65,10 @@ function RouteComponent() {
           />
         ))
       case 'scraps':
+        if (!contents.scraps) {
+          return null
+        }
+
         return contents.scraps.map((s) => (
           <ScrapPreview
             key={s.id}
@@ -80,9 +76,9 @@ function RouteComponent() {
               id: s.id,
               content: s.body,
               createdAt: s.createdAt,
-              likeCount: (s as { _count?: { likes: number } })._count?.likes,
-              commentCount: (s as { _count?: { scraps: number } })._count
-                ?.scraps,
+              likeCount: s._count.scrapLikes,
+              commentCount: s._count.scraps,
+              isLiked: s.isLiked,
             }}
             owner={{
               id: userInfo.id,

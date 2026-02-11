@@ -1,7 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { MoreHorizontal } from 'lucide-react'
 import type { Owner } from '@/features/timeline/types'
-import { cn } from '@/utils/cn'
 import UserPreview from '@/components/ui/UserPreview'
 import EditButton from '@/features/timeline/components/EditButton'
 import MarkdownViewer from '@/features/timeline/components/MarkdownViewer'
@@ -20,11 +19,7 @@ interface Props {
 
 const ScrapDetail: React.FC<Props> = ({ owner, scrap, isEditable }) => {
   return (
-    <div
-      className={cn(
-        'flex flex-col gap-4 px-4 pt-4 pb-2 bg-white rounded-t-xl border-b border-slate-100',
-      )}
-    >
+    <div className="flex flex-col gap-3 px-4 pt-4 pb-2 bg-white rounded-t-xl border-b border-slate-100">
       {/* Header */}
       <div className="flex justify-between items-start">
         <div className="flex gap-3 items-center">

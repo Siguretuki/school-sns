@@ -1,5 +1,6 @@
 import { Hono } from 'hono'
 import { describeRoute, resolver, validator } from 'hono-openapi'
+import { authCheck } from '../../middleware/authCheck.js'
 import { searchService } from '../../services/search/index.js'
 import {
   artifactSearchResultSchema,
@@ -62,10 +63,12 @@ export const search = new Hono()
         },
       },
     }),
+    authCheck,
     validator('query', searchQuerySchema.pick({ keyword: true })),
     async (c) => {
+      const userId = c.var.user.userId
       const { keyword } = c.req.valid('query')
-      const result = await searchService.searchScraps(keyword)
+      const result = await searchService.searchScraps(keyword, userId)
 
       if (result.type === 'Failure') {
         return c.json(

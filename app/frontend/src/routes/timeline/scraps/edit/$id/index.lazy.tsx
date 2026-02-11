@@ -24,7 +24,7 @@ function RouteComponent() {
   const { form } = useUpdateScrapForm(id, {
     title: data.title,
     body: data.body,
-    tags: data.tagScraps.map((tagScrap) => tagScrap.tagId),
+    tags: data.tags.map((t) => t.id),
   })
 
   return <ScrapEditor form={form} tags={tags} submitLabel="更新" />

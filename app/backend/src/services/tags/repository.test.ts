@@ -60,7 +60,7 @@ describe('TagsRepository', () => {
       })
 
       const scrap = await prisma.scraps.create({
-        data: { title: 'Scrap', body: 'Body Content', userId: user.id },
+        data: { body: 'Body Content', userId: user.id },
       })
       await prisma.tagScraps.create({
         data: { scrapId: scrap.id, tagId: tag1.id },
@@ -228,7 +228,7 @@ describe('TagsRepository', () => {
       })
 
       const otherScrap = await prisma.scraps.create({
-        data: { title: 'Other Scrap', body: '.', userId: other.id },
+        data: { body: '.', userId: other.id },
       })
       await prisma.tagScraps.create({
         data: { scrapId: otherScrap.id, tagId: tag.id },
@@ -246,7 +246,7 @@ describe('TagsRepository', () => {
       })
 
       const myScrap = await prisma.scraps.create({
-        data: { title: 'My Scrap', body: '.', userId: me.id },
+        data: { body: '.', userId: me.id },
       })
       await prisma.tagScraps.create({
         data: { scrapId: myScrap.id, tagId: tag.id },

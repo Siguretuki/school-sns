@@ -8,6 +8,8 @@ import Popover from '@/components/layout/Popover'
 import NewPostButton from '@/features/timeline/components/NewPostButton'
 import { useFetchSelfInfoOptions } from '@/api/routes/users'
 
+import { cn } from '@/utils/cn'
+
 export const Route = createLazyFileRoute('/timeline/scraps/detail/$id/')({
   component: RouteComponent,
 })
@@ -22,8 +24,8 @@ function RouteComponent() {
   } = useSuspenseQuery(useFetchScrapDetailOptions(params.id))
 
   return (
-    <div className="flex flex-col">
-      <div className="flex flex-col bg-white">
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col bg-white overflow-hidden rounded-xl shadow-sm">
         <ScrapDetail
           owner={{
             id: rootScrap.user.id,
@@ -40,11 +42,10 @@ function RouteComponent() {
           isEditable={userId === rootScrap.user.id}
         />
         <Actions
-          isLiked={false} // TODO: Fetch from API
-          onLike={() => {}} // TODO: Implement mutation
-          onReply={() => {}} // TODO: Navigate to reply
-          likesCount={0}
+          likesCount={rootScrap._count.scrapLikes}
           commentsCount={replies.length}
+          targetId={rootScrap.id}
+          isLiked={rootScrap.isLiked}
         />
       </div>
 
@@ -61,17 +62,19 @@ function RouteComponent() {
             scrap={{
               id: r.id,
               content: r.body,
-              createdAt:
-                (r as { createdAt?: string }).createdAt ??
-                new Date().toISOString(),
-              likeCount: (r as { _count?: { likes: number } })._count?.likes,
-              commentCount: (r as { _count?: { scraps: number } })._count
-                ?.scraps,
+              createdAt: r.createdAt,
+              likeCount: r._count.scrapLikes,
+              commentCount: r._count.scraps,
+              isLiked: r.isLiked,
+              parentId: rootScrap.id,
             }}
-            className="border-x-0 border-t-0 border-b border-slate-200 rounded-none shadow-none px-4 py-3 hover:bg-slate-50 transition-colors"
+            className={cn(
+              'border-x-0 border-t-0 border-b border-slate-200 rounded-none shadow-none px-4 py-3 hover:bg-slate-50 transition-colors',
+            )}
           />
         ))}
       </div>
+
       <Popover>
         <Link to="/timeline/scraps/create" search={{ replyTo: params.id }}>
           <NewPostButton variant="reply" />

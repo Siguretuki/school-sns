@@ -1,56 +1,47 @@
-import { Heart, MessageSquare, Share } from 'lucide-react'
+import { MessageSquare } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
 import IconWithLabel from '@/components/ui/IconWithLabel'
+import LikeButton from '@/components/ui/LikeButton'
+import { cn } from '@/utils/cn'
 
 interface Props {
-  onLike?: () => void
-  onReply?: () => void
-  isLiked?: boolean
-  likesCount?: number
-  commentsCount?: number
+  likesCount: number
+  commentsCount: number
+  targetId: string
+  isLiked: boolean
+  className?: string
 }
 
 const Actions: React.FC<Props> = ({
-  onLike,
-  onReply,
+  likesCount,
+  commentsCount,
+  targetId,
   isLiked,
-  likesCount = 0,
-  commentsCount = 0,
+  className,
 }) => {
   return (
-    <div className="flex flex-row justify-between items-center py-2 px-4 border-b border-slate-100 bg-white">
-      <div className="flex flex-row gap-6">
-        <button
-          onClick={onLike}
-          className="rounded-full hover:bg-pink-50 transition-colors group px-2 py-1 -ml-2"
-        >
-          <IconWithLabel
-            icon={() => (
-              <Heart
-                className={`w-[22px] h-[22px] transition-colors ${isLiked ? 'stroke-pink-600 fill-pink-600' : 'text-slate-500 group-hover:text-pink-500'}`}
-              />
-            )}
-            label={likesCount > 0 ? likesCount.toString() : ''}
-            className={`gap-1.5 ${isLiked ? 'text-pink-600' : 'text-slate-500 group-hover:text-pink-500'}`}
-          />
-        </button>
-
-        <button
-          onClick={onReply}
-          className="rounded-full hover:bg-sky-50 transition-colors group px-2 py-1"
-        >
-          <IconWithLabel
-            icon={() => (
-              <MessageSquare className="text-slate-500 w-[22px] h-[22px] group-hover:text-sky-500" />
-            )}
-            label={commentsCount > 0 ? commentsCount.toString() : ''}
-            className="gap-1.5 text-slate-500 group-hover:text-sky-500"
-          />
-        </button>
-      </div>
-
-      <button className="p-2 rounded-full hover:bg-slate-100 transition-colors group">
-        <Share className="text-slate-500 w-[24px] h-[24px] group-hover:text-slate-700" />
-      </button>
+    <div
+      className={cn(
+        'flex flex-row gap-4 py-2 px-4 border-y border-y-slate-800',
+        className,
+      )}
+    >
+      <IconWithLabel
+        icon={() => <LikeButton isLiked={isLiked} scrapId={targetId} />}
+        label={() => <span className="text-slate-600">{likesCount}</span>}
+      />
+      <Link
+        to="/timeline/scraps/create"
+        search={{
+          replyTo: targetId,
+        }}
+        className="rounded"
+      >
+        <IconWithLabel
+          icon={() => <MessageSquare className="text-slate-600" />}
+          label={() => <span className="text-slate-600">{commentsCount}</span>}
+        />
+      </Link>
     </div>
   )
 }

@@ -1,6 +1,7 @@
 import { Result } from '@praha/byethrow'
 import type { Artifacts } from '../../../generated/prisma/index.js'
 import { InvalidArtifactStatusError } from '../../errors.js'
+import { toTags } from '../../lib/formatter.js'
 import { summarizePost } from '../../lib/langchain/index.js'
 import { isPublished, isStatusString } from '../../lib/typeCheckFilter.js'
 import { TagNotFoundError } from '../tags/error.js'
@@ -12,6 +13,24 @@ import {
 } from './error.js'
 import { artifactsRepository } from './repository.js'
 import type { ArtifactOptions } from './type.js'
+
+const triggerSummaryInBackground = (artifactId: string) => {
+  void artifactsService
+    .summarizeArtifact(artifactId)
+    .then((result) => {
+      if (result.type === 'Failure') {
+        console.error(
+          `[artifacts] Failed to summarize artifact in background: ${artifactId} - ${result.error.message}`,
+        )
+      }
+    })
+    .catch((error: unknown) => {
+      console.error(
+        `[artifacts] Unexpected error while summarizing artifact in background: ${artifactId}`,
+        error,
+      )
+    })
+}
 
 export const artifactsService = {
   getArtifacts: async (
@@ -32,12 +51,20 @@ export const artifactsService = {
           ({ artifactId }) => artifactId,
         )
       : undefined
-    const artifacts = await artifactsRepository.getArtifacts({
-      ...options,
-      ids,
-      userIds,
-    })
-    return Result.succeed(artifacts.filter(isPublished).filter(isStatusString))
+
+    const artifacts = (
+      await artifactsRepository.getArtifacts({
+        ...options,
+        ids,
+        userIds,
+        includeDrafts: false,
+      })
+    )
+      .filter(isPublished)
+      .filter(isStatusString)
+      .map((artifact) => toTags(artifact))
+
+    return Result.succeed(artifacts)
   },
   getArtifactById: async (artifactId: string) => {
     const artifact = await artifactsRepository.getArtifactById(artifactId)
@@ -48,7 +75,7 @@ export const artifactsService = {
     if (!isStatusString(artifact)) {
       throw new InvalidArtifactStatusError()
     }
-    return Result.succeed(artifact)
+    return Result.succeed(toTags(artifact))
   },
   deleteArtifact: async (artifactId: string, userId: string) => {
     if (!(await artifactsRepository.isOwnArtifact(artifactId, userId))) {
@@ -76,6 +103,9 @@ export const artifactsService = {
     if (tagIds !== undefined) {
       await artifactsRepository.registerTags(artifact.id, tagIds)
     }
+    if (artifact.status === 'PUBLISHED') {
+      triggerSummaryInBackground(artifact.id)
+    }
 
     return Result.succeed(artifact)
   },
@@ -100,6 +130,10 @@ export const artifactsService = {
     if (!(await artifactsRepository.isOwnArtifact(artifactId, userId))) {
       return Result.fail(new NotArtifactOwnerError())
     }
+    const currentArtifact =
+      target.content?.status === 'PUBLISHED'
+        ? await artifactsRepository.getArtifactById(artifactId)
+        : null
 
     if (target.tagIds !== undefined) {
       await artifactsRepository.updateTags(artifactId, target.tagIds)
@@ -115,6 +149,13 @@ export const artifactsService = {
               : null
             : undefined,
       })
+    }
+    if (
+      currentArtifact !== null &&
+      currentArtifact.status === 'DRAFT' &&
+      target.content?.status === 'PUBLISHED'
+    ) {
+      triggerSummaryInBackground(artifactId)
     }
 
     return Result.succeed(undefined)

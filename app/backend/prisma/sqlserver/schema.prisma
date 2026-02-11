@@ -39,6 +39,8 @@ model Users {
   assets Assets[]
 
   mentions Mentions[]
+
+  scrapLikes ScrapLikes[]
 }
 
 model OAuthConnection {
@@ -107,7 +109,6 @@ model Scraps {
   parentId String?
   user Users @relation(fields: [userId], references: [id])
   userId String
-  title String
   body String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -115,6 +116,19 @@ model Scraps {
   scraps Scraps[] @relation("ScrapToParent")
 
   tagScraps TagScraps[]
+
+  scrapLikes ScrapLikes[]
+}
+
+model ScrapLikes {
+  id String @id @default(uuid(4))
+  scrap Scraps @relation(fields: [scrapId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  scrapId String
+  user Users @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  userId String
+  createdAt DateTime @default(now())
+
+  @@unique([scrapId, userId])
 }
 
 model Comments {

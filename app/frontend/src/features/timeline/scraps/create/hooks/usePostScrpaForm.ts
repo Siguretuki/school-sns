@@ -11,9 +11,6 @@ export const usePostScrapForm = (args: {
 
   return useScrapForm({
     initialValues: {
-      title: args.shareArtifact?.title
-        ? `この記事がスゴい!: ${args.shareArtifact.title}`
-        : '',
       body: args.shareArtifact?.id
         ? `[Shared Artifact](/timeline/artifacts/detail/${args.shareArtifact.id})`
         : '',

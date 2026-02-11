@@ -25,8 +25,7 @@ describe('SearchService', () => {
 
     const scrap = await prisma.scraps.create({
       data: {
-        title: `${keyword} Scrap`,
-        body: 'body',
+        body: `${keyword} Scrap`,
         userId: user.id,
       },
     })
@@ -182,8 +181,7 @@ describe('SearchService', () => {
       const user = await createTestUser()
       await prisma.scraps.create({
         data: {
-          title: `${keyword} Title`,
-          body: 'body',
+          body: `${keyword} desu`,
           userId: user.id,
         },
       })
@@ -193,7 +191,7 @@ describe('SearchService', () => {
       expect(result.type).toBe('Success')
       if (result.type === 'Success') {
         expect(result.value).toHaveLength(1)
-        expect(result.value[0].title).toContain(keyword)
+        expect(result.value[0].body).toContain(keyword)
       }
     })
   })

@@ -260,11 +260,15 @@ export const users = new Hono()
     async (c) => {
       const { userId } = c.req.param()
       const query = c.req.valid('query')
+      const accessUserId = c.var.user.userId
 
-      const result = await usersService.getContentsByUserId(userId, {
-        type: query?.type,
-        accessUserId: c.var.user.userId,
-      })
+      const result = await usersService.getContentsByUserId(
+        userId,
+        accessUserId,
+        {
+          type: query?.type,
+        },
+      )
 
       if (result.type === 'Failure') {
         return c.json({ message: 'Unexpected error occurred' }, 500)

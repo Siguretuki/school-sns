@@ -90,10 +90,10 @@ describe('SearchRepository', () => {
     it('SEARCH_REPO_006: キーワードがタイトルに含まれるスクラップを取得できること', async () => {
       const user = await createTestUser()
       const s1 = await prisma.scraps.create({
-        data: { title: 'React Hooks', body: 'memo', userId: user.id },
+        data: { body: 'Hooks', userId: user.id },
       })
       await prisma.scraps.create({
-        data: { title: 'Vue Composition', body: 'memo', userId: user.id },
+        data: { body: 'memo', userId: user.id },
       })
 
       const results = await repo.findScrapsByKeyword('Hooks')
@@ -105,7 +105,6 @@ describe('SearchRepository', () => {
       const user = await createTestUser()
       const s1 = await prisma.scraps.create({
         data: {
-          title: 'Memo',
           body: 'Check out Next.js features',
           userId: user.id,
         },
@@ -119,7 +118,7 @@ describe('SearchRepository', () => {
     it('SEARCH_REPO_008: 一致するキーワードがない場合にスクラップで空配列を返すこと', async () => {
       const user = await createTestUser()
       await prisma.scraps.create({
-        data: { title: 'T', body: 'B', userId: user.id },
+        data: { body: 'B', userId: user.id },
       })
       const results = await repo.findScrapsByKeyword('Nothing')
       expect(results).toEqual([])

@@ -13,7 +13,7 @@ export const Route = createLazyFileRoute('/search/result/')({
 
 const TAB_LABELS: Record<SearchType, string> = {
   artifact: 'アーティファクト',
-  scrap: 'スクラップ',
+  scrap: 'ポスト',
   user: 'ユーザー',
   tag: 'タグ',
 }
@@ -37,7 +37,7 @@ function RouteComponent() {
             key={a.id}
             artifact={a}
             owner={{
-              id: a.userId,
+              id: a.user.id,
               name: a.user.userName,
               avatarUrl: a.user.avatarUrl,
             }}
@@ -53,12 +53,12 @@ function RouteComponent() {
               createdAt:
                 (s as { createdAt?: string }).createdAt ??
                 new Date().toISOString(),
-              likeCount: (s as { _count?: { likes: number } })._count?.likes,
-              commentCount: (s as { _count?: { scraps: number } })._count
-                ?.scraps,
+              likeCount: s._count.scrapLikes,
+              commentCount: s._count.scraps,
+              isLiked: s.isLiked,
             }}
             owner={{
-              id: s.userId,
+              id: s.user.id,
               name: s.user.userName,
               avatarUrl: s.user.avatarUrl,
             }}
@@ -89,6 +89,7 @@ function RouteComponent() {
               <Tab.Item
                 label={TAB_LABELS[type]}
                 isActive={data.type === type}
+                className="px-5"
               />
             </Link>
           ),

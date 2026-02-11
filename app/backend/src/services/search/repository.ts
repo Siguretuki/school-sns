@@ -20,9 +20,14 @@ export const searchRepository = {
           },
         ],
       },
-      include: {
+      select: {
+        id: true,
+        title: true,
+        summaryByAI: true,
+        publishedAt: true,
         user: {
           select: {
+            id: true,
             userName: true,
             avatarUrl: true,
           },
@@ -44,15 +49,10 @@ export const searchRepository = {
       },
     })
   },
-  findScrapsByKeyword: async (keyword: string) => {
+  findScrapsByKeyword: async (keyword: string, userId: string) => {
     return await prisma.scraps.findMany({
       where: {
         OR: [
-          {
-            title: {
-              contains: keyword,
-            },
-          },
           {
             body: {
               contains: keyword,
@@ -60,9 +60,28 @@ export const searchRepository = {
           },
         ],
       },
-      include: {
+      select: {
+        id: true,
+        body: true,
+        createdAt: true,
+        updatedAt: true,
+        _count: {
+          select: {
+            scraps: true,
+            scrapLikes: true,
+          },
+        },
+        scrapLikes: {
+          where: {
+            userId,
+          },
+          select: {
+            id: true,
+          },
+        },
         user: {
           select: {
+            id: true,
             userName: true,
             avatarUrl: true,
           },

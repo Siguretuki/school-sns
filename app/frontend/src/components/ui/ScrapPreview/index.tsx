@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { Heart, MessageSquare, MoreHorizontal } from 'lucide-react'
+import { MessageSquare, MoreHorizontal } from 'lucide-react'
 import type { Owner } from '@/features/timeline/types'
 import type React from 'react'
 import { formatDistanceToNowJa } from '@/utils/date'
@@ -7,6 +7,7 @@ import Avatar from '@/components/ui/Avatar'
 import { cn } from '@/utils/cn'
 import IconWithLabel from '@/components/ui/IconWithLabel'
 import MarkdownViewer from '@/features/timeline/components/MarkdownViewer'
+import LikeButton from '@/components/ui/LikeButton'
 
 interface Props {
   owner: Owner
@@ -14,8 +15,10 @@ interface Props {
     id: string
     content: string
     createdAt: string
-    commentCount?: number
-    likeCount?: number
+    isLiked: boolean
+    commentCount: number
+    likeCount: number
+    parentId?: string
   }
   className?: string
 }
@@ -66,21 +69,22 @@ const ScrapPreview: React.FC<Props> = ({ owner, scrap, className }) => {
 
         <MarkdownViewer
           mdSource={scrap.content}
-          className="text-slate-800 whitespace-pre-wrap break-words text-base mb-3 leading-relaxed"
+          className="text-slate-800 whitespace-pre-wrap wrap-break-word text-base mb-3 leading-relaxed"
         />
 
         <div className="flex flex-row gap-6 w-full justify-start">
           <IconWithLabel
             className="gap-1.5 group/heart"
             icon={() => (
-              <Heart
-                size={18}
-                className="text-slate-500 group-hover/heart:stroke-pink-500 transition-colors"
+              <LikeButton
+                isLiked={scrap.isLiked}
+                scrapId={scrap.id}
+                parentId={scrap.parentId}
               />
             )}
             label={() => (
               <span className="text-sm font-medium text-slate-500 group-hover/heart:text-pink-500 transition-colors">
-                {scrap.likeCount ?? 0}
+                {scrap.likeCount}
               </span>
             )}
           />
@@ -94,7 +98,7 @@ const ScrapPreview: React.FC<Props> = ({ owner, scrap, className }) => {
             )}
             label={() => (
               <span className="text-sm font-medium text-slate-500 group-hover/comment:text-blue-500 transition-colors">
-                {scrap.commentCount ?? 0}
+                {scrap.commentCount}
               </span>
             )}
           />

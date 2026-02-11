@@ -25,7 +25,7 @@ function RouteComponent() {
     title: data.title,
     body: data.body,
     status: data.status,
-    tags: data.tagArtifacts.map((tag) => tag.tagId),
+    tags: data.tags.map((tag) => tag.id),
   })
 
   return <ArtifactEditor form={form} tags={tags} />

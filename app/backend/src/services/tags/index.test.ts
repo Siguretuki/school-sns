@@ -221,7 +221,6 @@ describe('TagsService', () => {
       // 他人のスクラップで使用
       await prisma.scraps.create({
         data: {
-          title: 'Other Scrap',
           body: '.',
           userId: other.id,
           tagScraps: { create: { tagId: tag.id } },

@@ -1,8 +1,7 @@
 import { Link, useMatch, useMatches } from '@tanstack/react-router'
-
+import { Settings } from 'lucide-react'
 import type { AppPath } from '@/types'
 import BackArrow from '@/components/ui/BackArrow'
-import Avatar from '@/components/ui/Avatar'
 import { cn } from '@/utils/cn'
 
 type TitlePath = Extract<
@@ -27,8 +26,8 @@ const HeaderTitles: Array<PathWithTitle> = [
   { path: '/timeline/artifacts', title: '記事' },
   { path: '/settings', title: '設定' },
   { path: '/search', title: '検索' },
-  { path: '/timeline/scraps/create', title: 'Scrap　新規投稿' },
-  { path: '/timeline/artifacts/create', title: 'Artifact　新規投稿' },
+  { path: '/timeline/scraps/create', title: '新規投稿' },
+  { path: '/timeline/artifacts/create', title: '新規記事投稿' },
 ]
 
 export default function Header() {
@@ -76,7 +75,7 @@ export default function Header() {
       </h1>
       {!isAuthPage && (
         <Link to="/settings" aria-label="設定へ移動">
-          <Avatar className="h-full py-1" />
+          <Settings className="w-7 h-7 text-slate-700" />
         </Link>
       )}
     </header>

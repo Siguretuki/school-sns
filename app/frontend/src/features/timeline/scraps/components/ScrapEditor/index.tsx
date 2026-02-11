@@ -28,24 +28,6 @@ const ScrapEditor: React.FC<Props> = ({ form, tags, submitLabel = '投稿' }) =>
       }}
       className="flex flex-col gap-2 min-h-full px-5 py-4 bg-slate-100"
     >
-      <form.Field name="title">
-        {(field) => (
-          <div className="w-full flex flex-col gap-1">
-            <label htmlFor={field.name} className="text-lg font-medium">
-              タイトル
-            </label>
-            <input
-              id={field.name}
-              name={field.name}
-              type="text"
-              placeholder="Title"
-              value={field.state.value}
-              onChange={(e) => field.handleChange(e.target.value)}
-              className="px-1 py-2 bg-slate-50 border rounded-lg"
-            />
-          </div>
-        )}
-      </form.Field>
       <form.Field name="body">
         {(field) => (
           <div className="w-full flex flex-col gap-1 flex-1">

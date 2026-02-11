@@ -10,9 +10,9 @@ export const scrapsRepository = {
     })
   },
   getScraps: async (
+    userId: string,
     options: ScrapOptions & { ids?: string[]; userIds?: string[] } = {
       onlyRootScraps: true,
-      includeUserInfo: true,
     },
   ) => {
     return await prisma.scraps.findMany({
@@ -26,30 +26,79 @@ export const scrapsRepository = {
         options.page && options.limit
           ? (options.page - 1) * options.limit
           : undefined,
-      include: {
-        user: options.includeUserInfo
-          ? {
+      select: {
+        id: true,
+        body: true,
+        createdAt: true,
+        updatedAt: true,
+        parentId: true,
+        _count: {
+          select: {
+            scraps: true,
+            scrapLikes: true,
+          },
+        },
+        user: {
+          select: {
+            id: true,
+            userName: true,
+            avatarUrl: true,
+          },
+        },
+        tagScraps: {
+          select: {
+            tag: {
               select: {
                 id: true,
-                userName: true,
-                avatarUrl: true,
+                name: true,
               },
-            }
-          : undefined,
+            },
+          },
+        },
+        scrapLikes: {
+          where: {
+            userId,
+          },
+          select: {
+            id: true,
+          },
+        },
       },
     })
   },
-  getScrapById: async (scrapId: string) => {
+  getScrapById: async (userId: string, scrapId: string) => {
     return await prisma.scraps.findUnique({
       where: { id: scrapId },
-      include: {
+      select: {
+        id: true,
+        body: true,
+        createdAt: true,
+        updatedAt: true,
         scraps: {
-          include: {
+          select: {
+            id: true,
+            body: true,
+            createdAt: true,
+            updatedAt: true,
+            _count: {
+              select: {
+                scraps: true,
+                scrapLikes: true,
+              },
+            },
             user: {
               select: {
                 id: true,
                 userName: true,
                 avatarUrl: true,
+              },
+            },
+            scrapLikes: {
+              where: {
+                userId,
+              },
+              select: {
+                id: true,
               },
             },
           },
@@ -61,7 +110,29 @@ export const scrapsRepository = {
             avatarUrl: true,
           },
         },
-        tagScraps: { select: { tagId: true } },
+        tagScraps: {
+          select: {
+            tag: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+        _count: {
+          select: {
+            scrapLikes: true,
+          },
+        },
+        scrapLikes: {
+          where: {
+            userId,
+          },
+          select: {
+            id: true,
+          },
+        },
       },
     })
   },
@@ -159,6 +230,31 @@ export const scrapsRepository = {
     return await prisma.tagScraps.findMany({
       where: { tagId: { in: tagIds } },
       select: { scrapId: true },
+    })
+  },
+  likeScrap: async (scrapId: string, userId: string) => {
+    return await prisma.scrapLikes.create({
+      data: {
+        scrapId,
+        userId,
+      },
+    })
+  },
+  isAlreadyLiked: async (scrapId: string, userId: string) => {
+    const like = await prisma.scrapLikes.findFirst({
+      where: {
+        scrapId,
+        userId,
+      },
+    })
+    return like !== null
+  },
+  unlikeScrap: async (scrapId: string, userId: string) => {
+    return await prisma.scrapLikes.deleteMany({
+      where: {
+        scrapId,
+        userId,
+      },
     })
   },
 }

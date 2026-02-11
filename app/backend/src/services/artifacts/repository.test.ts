@@ -113,7 +113,7 @@ describe('ArtifactsRepository', () => {
       // UserID指定
       const resByUser = await repo.getArtifacts({ userIds: [u1.id] })
       expect(resByUser).toHaveLength(1)
-      expect(resByUser[0].userId).toBe(u1.id)
+      expect(resByUser[0].user.id).toBe(u1.id)
     })
   })
 

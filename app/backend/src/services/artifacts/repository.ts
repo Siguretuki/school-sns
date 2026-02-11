@@ -10,36 +10,29 @@ export const artifactsRepository = {
     })
   },
   getArtifacts: async (
-    options: ArtifactOptions & { ids?: string[]; userIds?: string[] } = {},
+    options: ArtifactOptions & {
+      ids?: string[]
+      userIds?: string[]
+      includeDrafts?: boolean
+    } = {},
   ) => {
     return await prisma.artifacts.findMany({
       where: {
         id: options.ids ? { in: options.ids } : undefined,
         userId: options.userIds ? { in: options.userIds } : undefined,
-        publishedAt: {
-          not: null,
-        },
+        publishedAt: options.includeDrafts ? undefined : { not: null },
       },
       take: options.limit,
       skip:
         options.page && options.limit
           ? (options.page - 1) * options.limit
           : undefined,
-      include: {
-        user: {
-          select: {
-            id: true,
-            userName: true,
-            avatarUrl: true,
-          },
-        },
-      },
-    })
-  },
-  getArtifactById: async (artifactId: string) => {
-    return await prisma.artifacts.findUnique({
-      where: { id: artifactId },
-      include: {
+      select: {
+        id: true,
+        title: true,
+        summaryByAI: true,
+        publishedAt: true,
+        status: true,
         user: {
           select: {
             id: true,
@@ -49,7 +42,53 @@ export const artifactsRepository = {
         },
         tagArtifacts: {
           select: {
-            tagId: true,
+            tag: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    })
+  },
+  getArtifactById: async (artifactId: string) => {
+    return await prisma.artifacts.findUnique({
+      where: { id: artifactId },
+      select: {
+        id: true,
+        title: true,
+        body: true,
+        summaryByAI: true,
+        publishedAt: true,
+        status: true,
+        user: {
+          select: {
+            id: true,
+            userName: true,
+            avatarUrl: true,
+          },
+        },
+        tagArtifacts: {
+          select: {
+            tag: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+        mentions: {
+          select: {
+            user: {
+              select: {
+                id: true,
+                userName: true,
+                avatarUrl: true,
+              },
+            },
           },
         },
       },
