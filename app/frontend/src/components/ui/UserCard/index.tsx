@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router'
+import { ArrowRight } from 'lucide-react'
 import Avatar from '@/components/ui/Avatar'
 
 interface Props {
@@ -38,7 +39,7 @@ const UserCard: React.FC<Props> = ({ userId, userName, avatarUrl }) => {
       >
         <button className="flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium rounded-full transition-colors">
           Profile
-          <span className="text-lg leading-none">&rarr;</span>
+          <ArrowRight size={18} />
         </button>
       </Link>
     </div>
